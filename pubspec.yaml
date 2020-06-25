@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   credit_card_number_validator: ^1.0.4
-  flare_flutter : any
+  flare_flutter : ^2.0.3
   provider: ^4.1.2
 
 
