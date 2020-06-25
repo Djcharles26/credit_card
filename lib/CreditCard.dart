@@ -32,7 +32,9 @@ class CreditCardInfo extends ChangeNotifier {
   });
 
   CreditCardInfo.empty(
-      {this.cardHoldname = '',
+      {
+      this.id = 0,
+      this.cardHoldname = '',
       this.creditNumber = '',
       this.cvv = '',
       this.expiryDate = '',
