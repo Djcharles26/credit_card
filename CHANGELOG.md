@@ -5,3 +5,7 @@
 - Forms
 - Display 
 - Description
+
+## [1.0.1] - 24/06/2020
+
+- Added example and formated files
