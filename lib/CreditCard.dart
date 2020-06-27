@@ -44,8 +44,7 @@ class CreditCardInfo extends ChangeNotifier {
   });
 
   CreditCardInfo.empty(
-      {
-      this.id = 0,
+      {this.id = 0,
       this.cardHoldname = '',
       this.creditNumber = '',
       this.cvv = '',
@@ -140,11 +139,12 @@ class _CreditCardState extends State<CreditCard>
               ..rotateY(pi * animation.value),
             child: GestureDetector(
               onTap: () {
-                if (_animationStatus == AnimationStatus.dismissed && this.widget.creditCardInfo.cardtype == CardType.credit ){
-                  
+                if (_animationStatus == AnimationStatus.dismissed &&
+                    this.widget.creditCardInfo.cardtype == CardType.credit) {
                   Provider.of<CreditCardInfo>(context, listen: false)
                       .flipCardBack();
-                } else if(this.widget.creditCardInfo.cardtype == CardType.credit)
+                } else if (this.widget.creditCardInfo.cardtype ==
+                    CardType.credit)
                   Provider.of<CreditCardInfo>(context, listen: false)
                       .flipCardUp();
               },
@@ -194,56 +194,68 @@ class _CreditCardState extends State<CreditCard>
                                 mainAxisSize: MainAxisSize.max,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  
                                   Container(
                                     width: 50,
                                     height: 50,
                                     child: FlareActor(
-                                      prov.cardtype == CardType.credit? 'assets/cardIcons/${types[this.widget.creditCardInfo.type]}.flr'
-                                      : prov.cardtype == CardType.paypal? 'assets/cardIcons/PayPal.flr' : 'assets/cardIcons/Prepay.flr',
+                                      prov.cardtype == CardType.credit
+                                          ? 'assets/cardIcons/${types[this.widget.creditCardInfo.type]}.flr'
+                                          : prov.cardtype == CardType.paypal
+                                              ? 'assets/cardIcons/PayPal.flr'
+                                              : 'assets/cardIcons/Prepay.flr',
                                       animation: "Activate",
                                     ),
                                   ),
-                                  prov.cardtype == CardType.credit ?
-                                  Center(
-                                      child: Text(
-                                      this.widget.creditCardInfo.creditNumber ??
-                                          '',
-                                      style: TextStyle(
-                                          fontFamily: "kredit",
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 18,
-                                          color: Color.fromRGBO(230, 230, 230, 1),
-                                          letterSpacing: w * 0.01),
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ) : prov.cardtype == CardType.paypal ? 
-                                  Center(
-                                      child: Text(
-                                      this.widget.creditCardInfo.email ??
-                                          '',
-                                      style: TextStyle(
-                                          fontFamily: "Baloo Baihna 2",
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 18,
-                                          color: Color.fromRGBO(230, 230, 230, 1),
-                                          letterSpacing: w * 0.01),
-                                      textAlign: TextAlign.center,
-                                    )
-                                  )  : 
-                                  Center(
-                                      child: Text(
-                                      this.widget.creditCardInfo.credit ??
-                                          '',
-                                      style: TextStyle(
-                                          fontFamily: "Baloo Baihna 2",
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 18,
-                                          color: Color.fromRGBO(230, 230, 230, 1),
-                                          letterSpacing: w * 0.01),
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ) ,
+                                  prov.cardtype == CardType.credit
+                                      ? Center(
+                                          child: Text(
+                                          this
+                                                  .widget
+                                                  .creditCardInfo
+                                                  .creditNumber ??
+                                              '',
+                                          style: TextStyle(
+                                              fontFamily: "kredit",
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 18,
+                                              color: Color.fromRGBO(
+                                                  230, 230, 230, 1),
+                                              letterSpacing: w * 0.01),
+                                          textAlign: TextAlign.center,
+                                        ))
+                                      : prov.cardtype == CardType.paypal
+                                          ? Center(
+                                              child: Text(
+                                              this
+                                                      .widget
+                                                      .creditCardInfo
+                                                      .email ??
+                                                  '',
+                                              style: TextStyle(
+                                                  fontFamily: "Baloo Baihna 2",
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 18,
+                                                  color: Color.fromRGBO(
+                                                      230, 230, 230, 1),
+                                                  letterSpacing: w * 0.01),
+                                              textAlign: TextAlign.center,
+                                            ))
+                                          : Center(
+                                              child: Text(
+                                              this
+                                                      .widget
+                                                      .creditCardInfo
+                                                      .credit ??
+                                                  '',
+                                              style: TextStyle(
+                                                  fontFamily: "Baloo Baihna 2",
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 18,
+                                                  color: Color.fromRGBO(
+                                                      230, 230, 230, 1),
+                                                  letterSpacing: w * 0.01),
+                                              textAlign: TextAlign.center,
+                                            )),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -265,19 +277,20 @@ class _CreditCardState extends State<CreditCard>
                                                   fontWeight: FontWeight.w700,
                                                   fontSize: 16,
                                                   color: Colors.grey))),
-                                      prov.cardtype == CardType.prepay || prov.cardtype == CardType.credit ?
-                                      Text(
-                                          this
-                                          .widget
-                                          .creditCardInfo
-                                          .expiryDate ??
-                                      '',
-                                        style: TextStyle(
-                                            fontFamily: "Baloo Baihna 2",
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 18,
-                                            color: mainWhite)
-                                      ) : Container(),
+                                      prov.cardtype == CardType.prepay ||
+                                              prov.cardtype == CardType.credit
+                                          ? Text(
+                                              this
+                                                      .widget
+                                                      .creditCardInfo
+                                                      .expiryDate ??
+                                                  '',
+                                              style: TextStyle(
+                                                  fontFamily: "Baloo Baihna 2",
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 18,
+                                                  color: mainWhite))
+                                          : Container(),
                                     ],
                                   ),
                                 ],
@@ -285,7 +298,9 @@ class _CreditCardState extends State<CreditCard>
                             )
                           ],
                         )
-                      : prov.cardtype == CardType.credit ? _backCard(w, h) : Container();
+                      : prov.cardtype == CardType.credit
+                          ? _backCard(w, h)
+                          : Container();
                 },
               ),
             ),
@@ -382,12 +397,10 @@ class CreditForm extends StatefulWidget {
   final int codeLength;
   CreditForm(
     this.onChangedCard,
-    this.dropCardOnCancel,
-    {
-      this.validateCode,
-      this.codeLength,
-    }
-  );
+    this.dropCardOnCancel, {
+    this.validateCode,
+    this.codeLength,
+  });
 
   @override
   _CreditFormState createState() => _CreditFormState();
@@ -397,7 +410,7 @@ class _CreditFormState extends State<CreditForm> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _number = new TextEditingController(),
       _name = new TextEditingController(text: ''),
-      _date = new TextEditingController(text : ''),
+      _date = new TextEditingController(text: ''),
       _cvv = new TextEditingController(text: ''),
       _email = new TextEditingController(text: ''),
       _code = new TextEditingController(text: '');
@@ -438,38 +451,33 @@ class _CreditFormState extends State<CreditForm> {
     });
     _email.addListener(() {
       info.email = _email.text;
-      Provider.of<CreditCardInfo>(context,listen: false).updateInfo(info);
+      Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
     });
-    _code.addListener(() async{
+    _code.addListener(() async {
       setState(() {
-        _isLoading= false;
+        _isLoading = false;
       });
-      if(_code.text.length > this.widget.codeLength){
-
-        _code.text = _code.text.substring(0,this.widget.codeLength);
+      if (_code.text.length > this.widget.codeLength) {
+        _code.text = _code.text.substring(0, this.widget.codeLength);
         _code.selection = TextSelection.collapsed(offset: _code.text.length);
-      }
-      else if(_code.text.length == this.widget.codeLength){
-
-        try{
+      } else if (_code.text.length == this.widget.codeLength) {
+        try {
           setState(() {
             _isLoading = true;
           });
-          Map<String,String> codeValues = await this.widget.validateCode(_code.text);
-          info.cardHoldname= codeValues['name'];
+          Map<String, String> codeValues =
+              await this.widget.validateCode(_code.text);
+          info.cardHoldname = codeValues['name'];
           info.expiryDate = codeValues['expiryDate'];
           info.credit = codeValues['credit'];
-          Provider.of<CreditCardInfo>(context,listen:false).updateInfo(info);
+          Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
           setState(() {
             _isLoading = false;
-        });
-        }catch(error){
-        }
-
-      }else {
+          });
+        } catch (error) {}
+      } else {
         info.credit = "Not valid";
-        Provider.of<CreditCardInfo>(context,listen:false).updateInfo(info);
-
+        Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
       }
     });
     _date.addListener(onChangeDate);
@@ -529,74 +537,73 @@ class _CreditFormState extends State<CreditForm> {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     return Consumer<CreditCardInfo>(builder: (context, card, _) {
-            return Scaffold(
-              backgroundColor: mainWhite,
-              body: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  SizedBox(
-                    height: h * 0.1,
-                  ),
-                  SingleChildScrollView(
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.05,
-                          ),
-                          _isLoading
-                            ? Container(
-                              width: MediaQuery.of(context).size.width * 0.72,
-                              height: MediaQuery.of(context).size.width * 0.45,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation(yellowOrange),
-                                  ),
-                              ),
-                            )
-                            : Material(
-                              elevation: 8,
-                              color: Colors.transparent,
-                              shadowColor: Color.fromRGBO(250, 250, 250, .5),
-                              child: CreditCard(
-                                creditCardInfo: Provider.of<CreditCardInfo>(
-                                    context,
-                                    listen: true),
-                                canEdit: false,
-                              )),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.025,
-                          ),
-                          Container(
-                            constraints: BoxConstraints(
-                              maxWidth: w * 0.72,
-                            ),
+      return Scaffold(
+        backgroundColor: mainWhite,
+        body: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            SizedBox(
+              height: h * 0.1,
+            ),
+            SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                    ),
+                    _isLoading
+                        ? Container(
+                            width: MediaQuery.of(context).size.width * 0.72,
+                            height: MediaQuery.of(context).size.width * 0.45,
                             child: Center(
-                                child: GridView.builder(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    gridDelegate:
-                                        new SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 8),
-                                    itemCount: this._colors.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return this._label(index);
-                                    })),
-                          ),
-                          Container(
-                            margin: EdgeInsets.all(15),
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                mainAxisSize: MainAxisSize.max,
-                                children: info.cardtype == CardType.credit ? <Widget>[
+                              child: CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation(yellowOrange),
+                              ),
+                            ),
+                          )
+                        : Material(
+                            elevation: 8,
+                            color: Colors.transparent,
+                            shadowColor: Color.fromRGBO(250, 250, 250, .5),
+                            child: CreditCard(
+                              creditCardInfo: Provider.of<CreditCardInfo>(
+                                  context,
+                                  listen: true),
+                              canEdit: false,
+                            )),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.025,
+                    ),
+                    Container(
+                      constraints: BoxConstraints(
+                        maxWidth: w * 0.72,
+                      ),
+                      child: Center(
+                          child: GridView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  new SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 8),
+                              itemCount: this._colors.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return this._label(index);
+                              })),
+                    ),
+                    Container(
+                      margin: EdgeInsets.all(15),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisSize: MainAxisSize.max,
+                          children: info.cardtype == CardType.credit
+                              ? <Widget>[
                                   textForm("Nombre", w, _name),
                                   textForm("Número de tarjeta", w, _number),
                                   Container(
@@ -613,68 +620,68 @@ class _CreditFormState extends State<CreditForm> {
                                       ],
                                     ),
                                   )
-                                ] : info.cardtype == CardType.paypal? <Widget>[
-                                  emailTextForm(w),
-                                  passwordTextForm(w),
-                                ] : <Widget>[
-                                  codeTextForm(w)
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: h*0.05,
-                          ),
-                          
-                          RaisedButton(
-                            color: yellowOrange,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                            child: Container(
-                                width: w * 0.72,
-                                height: 60,
-                                child: Center(
-                                    child: Text("Confirmar",
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: "Baloo Baihna 2",
-                                            color: mainBlack)))),
-                            onPressed: () {
-                              if (_formKey.currentState.validate()) {
-                                this.widget.onChangedCard(
-                                    Provider.of<CreditCardInfo>(context,
-                                        listen: false));
-                                Navigator.pop(context);
-                              }
-                            },
-                          )
-                        ],
+                                ]
+                              : info.cardtype == CardType.paypal
+                                  ? <Widget>[
+                                      emailTextForm(w),
+                                      passwordTextForm(w),
+                                    ]
+                                  : <Widget>[codeTextForm(w)],
+                        ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    top: 8,
-                    left: -16,
-                    child: FlatButton(
-                      focusColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      child: Text("x",
-                          style: TextStyle(
-                              color: mainBlack,
-                              fontSize: 32,
-                              fontWeight: FontWeight.w300)),
-                      onPressed: () {
-                        this.widget.dropCardOnCancel(info);
-                        Navigator.pop(context);
-                      },
+                    SizedBox(
+                      height: h * 0.05,
                     ),
-                  ),
-                ],
+                    RaisedButton(
+                      color: yellowOrange,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      child: Container(
+                          width: w * 0.72,
+                          height: 60,
+                          child: Center(
+                              child: Text("Confirmar",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: "Baloo Baihna 2",
+                                      color: mainBlack)))),
+                      onPressed: () {
+                        if (_formKey.currentState.validate()) {
+                          this.widget.onChangedCard(Provider.of<CreditCardInfo>(
+                              context,
+                              listen: false));
+                          Navigator.pop(context);
+                        }
+                      },
+                    )
+                  ],
+                ),
               ),
-            );
-          });
+            ),
+            Positioned(
+              top: 8,
+              left: -16,
+              child: FlatButton(
+                focusColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                child: Text("x",
+                    style: TextStyle(
+                        color: mainBlack,
+                        fontSize: 32,
+                        fontWeight: FontWeight.w300)),
+                onPressed: () {
+                  this.widget.dropCardOnCancel(info);
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget passwordTextForm(double w) {
@@ -699,7 +706,7 @@ class _CreditFormState extends State<CreditForm> {
             borderSide: BorderSide(color: mainGrey),
           ),
         ),
-        keyboardType:TextInputType.text,
+        keyboardType: TextInputType.text,
         obscureText: true,
         validator: (value) {
           if (value.isEmpty) {
@@ -709,12 +716,11 @@ class _CreditFormState extends State<CreditForm> {
           }
         },
         textInputAction: TextInputAction.next,
-        
       ),
     );
   }
 
-  Widget codeTextForm(double w){
+  Widget codeTextForm(double w) {
     return Container(
       width: w,
       padding: EdgeInsets.symmetric(vertical: 8),
@@ -736,7 +742,7 @@ class _CreditFormState extends State<CreditForm> {
             borderSide: BorderSide(color: mainGrey),
           ),
         ),
-        keyboardType:TextInputType.text,
+        keyboardType: TextInputType.text,
         validator: (value) {
           if (value.isEmpty) {
             return 'Required';
@@ -745,12 +751,11 @@ class _CreditFormState extends State<CreditForm> {
           }
         },
         textInputAction: TextInputAction.next,
-        
       ),
     );
   }
 
-  Widget emailTextForm(double w){
+  Widget emailTextForm(double w) {
     return Container(
       width: w,
       padding: EdgeInsets.symmetric(vertical: 8),
@@ -772,26 +777,24 @@ class _CreditFormState extends State<CreditForm> {
             borderSide: BorderSide(color: mainGrey),
           ),
         ),
-        
-        keyboardType:TextInputType.emailAddress,
+        keyboardType: TextInputType.emailAddress,
         validator: (value) {
           if (value.isEmpty) {
             return 'Required';
           } else {
-            Pattern pat = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+            Pattern pat =
+                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
             RegExp exp = new RegExp(pat);
-            if(!exp.hasMatch(value)){
+            if (!exp.hasMatch(value)) {
               return 'Email is invalid';
             }
             return null;
           }
         },
         textInputAction: TextInputAction.next,
-        
       ),
     );
   }
-
 
   Widget textForm(
       String _labelText, double w, TextEditingController controller) {
@@ -818,7 +821,7 @@ class _CreditFormState extends State<CreditForm> {
         ),
         obscureText: _labelText == 'CVV',
         keyboardType:
-            _labelText == 'Nombre'  ? TextInputType.text : TextInputType.number,
+            _labelText == 'Nombre' ? TextInputType.text : TextInputType.number,
         inputFormatters: [
           _labelText != 'Nombre'
               ? WhitelistingTextInputFormatter(RegExp("[0-9·\ /]"))
@@ -966,4 +969,3 @@ class _CreditFormState extends State<CreditForm> {
     Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
   }
 }
-
