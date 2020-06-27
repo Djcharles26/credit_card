@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:credit_card_minimalist/credit_card.dart';
 import 'package:credit_card_number_validator/credit_card_number_validator.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
@@ -6,17 +7,27 @@ import 'package:flutter/services.dart';
 import './utils/Colors.dart';
 import 'package:provider/provider.dart';
 
+enum CardType {
+  none,
+  credit,
+  paypal,
+  prepay,
+}
+
 class CreditCardInfo extends ChangeNotifier {
   int id;
   final double width;
   final double height;
   String cardHoldname;
   String creditNumber;
+  String credit;
+  String email;
   String cvv;
   String expiryDate;
   int type;
   Color color;
   bool flipped;
+  CardType cardtype;
 
   CreditCardInfo({
     @required this.id,
@@ -24,6 +35,7 @@ class CreditCardInfo extends ChangeNotifier {
     @required this.creditNumber,
     @required this.cvv,
     @required this.expiryDate,
+    @required this.cardtype,
     this.type,
     this.width,
     this.height,
@@ -40,6 +52,9 @@ class CreditCardInfo extends ChangeNotifier {
       this.expiryDate = '',
       this.height,
       this.width,
+      this.cardtype = CardType.credit,
+      this.email = '',
+      this.credit = '',
       this.color = Colors.black,
       this.type = 0});
 
@@ -125,10 +140,11 @@ class _CreditCardState extends State<CreditCard>
               ..rotateY(pi * animation.value),
             child: GestureDetector(
               onTap: () {
-                if (_animationStatus == AnimationStatus.dismissed) {
+                if (_animationStatus == AnimationStatus.dismissed && this.widget.creditCardInfo.cardtype == CardType.credit ){
+                  
                   Provider.of<CreditCardInfo>(context, listen: false)
                       .flipCardBack();
-                } else
+                } else if(this.widget.creditCardInfo.cardtype == CardType.credit)
                   Provider.of<CreditCardInfo>(context, listen: false)
                       .flipCardUp();
               },
@@ -178,26 +194,56 @@ class _CreditCardState extends State<CreditCard>
                                 mainAxisSize: MainAxisSize.max,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
+                                  
                                   Container(
                                     width: 50,
                                     height: 50,
                                     child: FlareActor(
-                                      'assets/cardIcons/${types[this.widget.creditCardInfo.type]}.flr',
+                                      prov.cardtype == CardType.credit? 'assets/cardIcons/${types[this.widget.creditCardInfo.type]}.flr'
+                                      : prov.cardtype == CardType.paypal? 'assets/cardIcons/PayPal.flr' : 'assets/cardIcons/Prepay.flr',
                                       animation: "Activate",
                                     ),
                                   ),
+                                  prov.cardtype == CardType.credit ?
                                   Center(
                                       child: Text(
-                                    this.widget.creditCardInfo.creditNumber ??
-                                        '',
-                                    style: TextStyle(
-                                        fontFamily: "kredit",
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 18,
-                                        color: Color.fromRGBO(230, 230, 230, 1),
-                                        letterSpacing: w * 0.01),
-                                    textAlign: TextAlign.center,
-                                  )),
+                                      this.widget.creditCardInfo.creditNumber ??
+                                          '',
+                                      style: TextStyle(
+                                          fontFamily: "kredit",
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 18,
+                                          color: Color.fromRGBO(230, 230, 230, 1),
+                                          letterSpacing: w * 0.01),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ) : prov.cardtype == CardType.paypal ? 
+                                  Center(
+                                      child: Text(
+                                      this.widget.creditCardInfo.email ??
+                                          '',
+                                      style: TextStyle(
+                                          fontFamily: "Baloo Baihna 2",
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 18,
+                                          color: Color.fromRGBO(230, 230, 230, 1),
+                                          letterSpacing: w * 0.01),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  )  : 
+                                  Center(
+                                      child: Text(
+                                      this.widget.creditCardInfo.credit ??
+                                          '',
+                                      style: TextStyle(
+                                          fontFamily: "Baloo Baihna 2",
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 18,
+                                          color: Color.fromRGBO(230, 230, 230, 1),
+                                          letterSpacing: w * 0.01),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ) ,
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -219,17 +265,19 @@ class _CreditCardState extends State<CreditCard>
                                                   fontWeight: FontWeight.w700,
                                                   fontSize: 16,
                                                   color: Colors.grey))),
+                                      prov.cardtype == CardType.prepay || prov.cardtype == CardType.credit ?
                                       Text(
                                           this
-                                                  .widget
-                                                  .creditCardInfo
-                                                  .expiryDate ??
-                                              '',
-                                          style: TextStyle(
-                                              fontFamily: "Baloo Baihna 2",
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 18,
-                                              color: mainWhite)),
+                                          .widget
+                                          .creditCardInfo
+                                          .expiryDate ??
+                                      '',
+                                        style: TextStyle(
+                                            fontFamily: "Baloo Baihna 2",
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 18,
+                                            color: mainWhite)
+                                      ) : Container(),
                                     ],
                                   ),
                                 ],
@@ -237,7 +285,7 @@ class _CreditCardState extends State<CreditCard>
                             )
                           ],
                         )
-                      : _backCard(w, h);
+                      : prov.cardtype == CardType.credit ? _backCard(w, h) : Container();
                 },
               ),
             ),
@@ -330,10 +378,15 @@ class _CreditCardState extends State<CreditCard>
 class CreditForm extends StatefulWidget {
   final Function(CreditCardInfo cardInfo) onChangedCard;
   final Function(CreditCardInfo cardInfo) dropCardOnCancel;
+  final Future Function(String code) validateCode;
+  final int codeLength;
   CreditForm(
     this.onChangedCard,
     this.dropCardOnCancel,
-
+    {
+      this.validateCode,
+      this.codeLength,
+    }
   );
 
   @override
@@ -343,9 +396,12 @@ class CreditForm extends StatefulWidget {
 class _CreditFormState extends State<CreditForm> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _number = new TextEditingController(),
-      _name = new TextEditingController(),
-      _date = new TextEditingController(),
-      _cvv = new TextEditingController();
+      _name = new TextEditingController(text: ''),
+      _date = new TextEditingController(text : ''),
+      _cvv = new TextEditingController(text: ''),
+      _email = new TextEditingController(text: ''),
+      _code = new TextEditingController(text: '');
+
   CreditCardInfo info;
   bool _isLoading = false;
   int _error;
@@ -379,6 +435,33 @@ class _CreditFormState extends State<CreditForm> {
     _name.addListener(() {
       info.cardHoldname = _name.text;
       Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
+    });
+    _email.addListener(() {
+      info.email = _email.text;
+      Provider.of<CreditCardInfo>(context,listen: false).updateInfo(info);
+    });
+    _code.addListener(() async{
+      if(_code.text.length > this.widget.codeLength){
+
+        _code.text = _code.text.substring(0,this.widget.codeLength);
+        _code.selection = TextSelection.collapsed(offset: _code.text.length);
+      }
+      else if(_code.text.length == this.widget.codeLength){
+        
+        setState(() {
+          _isLoading = true;
+        });
+        info.credit = await this.widget.validateCode(_code.text);
+        Provider.of<CreditCardInfo>(context,listen:false).updateInfo(info);
+        setState(() {
+          _isLoading = false;
+        });
+
+      }else {
+        info.credit = "Not valid";
+        Provider.of<CreditCardInfo>(context,listen:false).updateInfo(info);
+
+      }
     });
     _date.addListener(onChangeDate);
     _cvv.addListener(() {
@@ -437,9 +520,11 @@ class _CreditFormState extends State<CreditForm> {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     return _isLoading
-        ? CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(yellowOrange),
-          )
+        ? Center(
+          child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(yellowOrange),
+            ),
+        )
         : Consumer<CreditCardInfo>(builder: (context, card, _) {
             return Scaffold(
               backgroundColor: mainWhite,
@@ -498,7 +583,7 @@ class _CreditFormState extends State<CreditForm> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 mainAxisSize: MainAxisSize.max,
-                                children: <Widget>[
+                                children: info.cardtype == CardType.credit ? <Widget>[
                                   textForm("Nombre", w, _name),
                                   textForm("Número de tarjeta", w, _number),
                                   Container(
@@ -515,6 +600,11 @@ class _CreditFormState extends State<CreditForm> {
                                       ],
                                     ),
                                   )
+                                ] : info.cardtype == CardType.paypal? <Widget>[
+                                  emailTextForm(w),
+                                  passwordTextForm(w),
+                                ] : <Widget>[
+                                  codeTextForm(w)
                                 ],
                               ),
                             ),
@@ -574,6 +664,121 @@ class _CreditFormState extends State<CreditForm> {
           });
   }
 
+  Widget passwordTextForm(double w) {
+    return Container(
+      width: w,
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: new TextFormField(
+        autofocus: false,
+        enableInteractiveSelection: false,
+        style: new TextStyle(fontSize: 20),
+        controller: _code,
+        decoration: InputDecoration(
+          labelText: 'Contraseña',
+          labelStyle: TextStyle(
+            fontFamily: "Baloo Baihna 2",
+            fontWeight: FontWeight.w500,
+            fontSize: 18,
+            color: Colors.black38,
+          ),
+          focusColor: mainGrey,
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: mainGrey),
+          ),
+        ),
+        keyboardType:TextInputType.text,
+        obscureText: true,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'Required';
+          } else {
+            return null;
+          }
+        },
+        textInputAction: TextInputAction.next,
+        
+      ),
+    );
+  }
+
+  Widget codeTextForm(double w){
+    return Container(
+      width: w,
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: new TextFormField(
+        autofocus: false,
+        enableInteractiveSelection: false,
+        style: new TextStyle(fontSize: 20),
+        controller: _code,
+        decoration: InputDecoration(
+          labelText: 'Código',
+          labelStyle: TextStyle(
+            fontFamily: "Baloo Baihna 2",
+            fontWeight: FontWeight.w500,
+            fontSize: 18,
+            color: Colors.black38,
+          ),
+          focusColor: mainGrey,
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: mainGrey),
+          ),
+        ),
+        keyboardType:TextInputType.text,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'Required';
+          } else {
+            return null;
+          }
+        },
+        textInputAction: TextInputAction.next,
+        
+      ),
+    );
+  }
+
+  Widget emailTextForm(double w){
+    return Container(
+      width: w,
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: new TextFormField(
+        autofocus: false,
+        enableInteractiveSelection: false,
+        style: new TextStyle(fontSize: 20),
+        controller: _email,
+        decoration: InputDecoration(
+          labelText: 'Email',
+          labelStyle: TextStyle(
+            fontFamily: "Baloo Baihna 2",
+            fontWeight: FontWeight.w500,
+            fontSize: 18,
+            color: Colors.black38,
+          ),
+          focusColor: mainGrey,
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: mainGrey),
+          ),
+        ),
+        
+        keyboardType:TextInputType.emailAddress,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'Required';
+          } else {
+            Pattern pat = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+            RegExp exp = new RegExp(pat);
+            if(!exp.hasMatch(value)){
+              return 'Email is invalid';
+            }
+            return null;
+          }
+        },
+        textInputAction: TextInputAction.next,
+        
+      ),
+    );
+  }
+
 
   Widget textForm(
       String _labelText, double w, TextEditingController controller) {
@@ -600,7 +805,7 @@ class _CreditFormState extends State<CreditForm> {
         ),
         obscureText: _labelText == 'CVV',
         keyboardType:
-            _labelText == 'Nombre' ? TextInputType.text : TextInputType.number,
+            _labelText == 'Nombre'  ? TextInputType.text : TextInputType.number,
         inputFormatters: [
           _labelText != 'Nombre'
               ? WhitelistingTextInputFormatter(RegExp("[0-9·\ /]"))
