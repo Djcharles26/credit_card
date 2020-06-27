@@ -441,21 +441,30 @@ class _CreditFormState extends State<CreditForm> {
       Provider.of<CreditCardInfo>(context,listen: false).updateInfo(info);
     });
     _code.addListener(() async{
+      setState(() {
+        _isLoading= false;
+      });
       if(_code.text.length > this.widget.codeLength){
 
         _code.text = _code.text.substring(0,this.widget.codeLength);
         _code.selection = TextSelection.collapsed(offset: _code.text.length);
       }
       else if(_code.text.length == this.widget.codeLength){
-        
-        setState(() {
-          _isLoading = true;
+
+        try{
+          setState(() {
+            _isLoading = true;
+          });
+          Map<String,String> codeValues = await this.widget.validateCode(_code.text);
+          info.cardHoldname= codeValues['name'];
+          info.expiryDate = codeValues['expiryDate'];
+          info.credit = codeValues['credit'];
+          Provider.of<CreditCardInfo>(context,listen:false).updateInfo(info);
+          setState(() {
+            _isLoading = false;
         });
-        info.credit = await this.widget.validateCode(_code.text);
-        Provider.of<CreditCardInfo>(context,listen:false).updateInfo(info);
-        setState(() {
-          _isLoading = false;
-        });
+        }catch(error){
+        }
 
       }else {
         info.credit = "Not valid";
@@ -519,13 +528,7 @@ class _CreditFormState extends State<CreditForm> {
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
-    return _isLoading
-        ? Center(
-          child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(yellowOrange),
-            ),
-        )
-        : Consumer<CreditCardInfo>(builder: (context, card, _) {
+    return Consumer<CreditCardInfo>(builder: (context, card, _) {
             return Scaffold(
               backgroundColor: mainWhite,
               body: Stack(
@@ -545,7 +548,17 @@ class _CreditFormState extends State<CreditForm> {
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.05,
                           ),
-                          Material(
+                          _isLoading
+                            ? Container(
+                              width: MediaQuery.of(context).size.width * 0.72,
+                              height: MediaQuery.of(context).size.width * 0.45,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation(yellowOrange),
+                                  ),
+                              ),
+                            )
+                            : Material(
                               elevation: 8,
                               color: Colors.transparent,
                               shadowColor: Color.fromRGBO(250, 250, 250, .5),
