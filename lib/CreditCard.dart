@@ -330,13 +330,10 @@ class _CreditCardState extends State<CreditCard>
 class CreditForm extends StatefulWidget {
   final Function(CreditCardInfo cardInfo) onChangedCard;
   final Function(CreditCardInfo cardInfo) dropCardOnCancel;
-  final bool createCard;
   CreditForm(
     this.onChangedCard,
     this.dropCardOnCancel,
-    {
-      this.createCard
-    }
+
   );
 
   @override
@@ -523,13 +520,9 @@ class _CreditFormState extends State<CreditForm> {
                             ),
                           ),
                           SizedBox(
-                            height: h*0.02,
+                            height: h*0.05,
                           ),
-                          this.widget.createCard?
-                            this.prepayCard() : Container(),
-                          SizedBox(
-                            height: h * 0.02,
-                          ),
+                          
                           RaisedButton(
                             color: yellowOrange,
                             shape: RoundedRectangleBorder(
@@ -581,20 +574,6 @@ class _CreditFormState extends State<CreditForm> {
           });
   }
 
-  Widget prepayCard() {
-    return FlatButton(
-      focusColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      splashColor: Colors.transparent,
-      child: Text("O añade una tarjeta de prepago", style: TextStyle(fontFamily: "Baloo Baihna 2", fontSize: 16, color: mainGrey)),
-      onPressed: (){
-        showDialog(
-          context: context,
-          child: PrePayDialog()
-        );
-      },
-    );
-  }
 
   Widget textForm(
       String _labelText, double w, TextEditingController controller) {
@@ -770,72 +749,3 @@ class _CreditFormState extends State<CreditForm> {
   }
 }
 
-
-class PrePayDialog extends StatefulWidget {
-  @override
-  _PrePayDialogState createState() => _PrePayDialogState();
-}
-
-class _PrePayDialogState extends State<PrePayDialog> {
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12)
-      ),
-      title:Text("Elige que tipo de tarjeta deseas agregar", 
-        style: TextStyle(
-          fontSize: 20, 
-          fontFamily: "Baloo Baihna 2", 
-          fontWeight: FontWeight.bold
-        )
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Column(mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  width: 50,
-                  height: 50,
-                  child: FlareActor('assets/cardIcons/Prepay.flr', animation: 'Activate',)
-                ),
-                SizedBox(height: 16,),
-                Text("Prepago", style:TextStyle(fontFamily: "Baloo Baina 2", color: mainGrey, fontWeight: FontWeight.w400)),
-              ],),
-              Column(mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  width: 50,
-                  height: 50,
-                  child: FlareActor('assets/cardIcons/PayPal.flr', animation: 'Activate',)
-                ),
-                SizedBox(height: 16,),
-                Text("PayPal", style:TextStyle(fontFamily: "Baloo Baina 2", color: mainGrey, fontWeight: FontWeight.w400)),
-              ],),
-              
-            ],
-          )
-        ],
-      ),
-      actions: <Widget>[
-        FlatButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          child: Text("Cancelar", style: TextStyle(fontFamily: "Baloo Baihna 2" , fontSize: 15, color: yellowOrange)),
-          onPressed: (){
-            Navigator.pop(context);
-          },
-        )
-      ],
-    );
-  }
-}
