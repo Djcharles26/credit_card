@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:credit_card_minimalist/credit_card.dart';
 import 'package:credit_card_number_validator/credit_card_number_validator.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +40,17 @@ class CreditCardInfo extends ChangeNotifier {
     this.height,
     this.color,
     this.flipped,
+  });
+
+  CreditCardInfo.prepay({
+    @required this.id,
+    @required this.cardHoldname,
+    @required this.expiryDate,
+    @required this.cardtype,
+    @required this.credit,
+    this.width,
+    this.height,
+    this.color,
   });
 
   CreditCardInfo.empty(
@@ -85,6 +95,7 @@ class CreditCard extends StatefulWidget {
   final Function(CreditCardInfo card) onChangeCard;
   final bool createCard;
   final bool canEdit;
+  final String language;
 
   CreditCard(
       {@required this.creditCardInfo,
@@ -92,7 +103,8 @@ class CreditCard extends StatefulWidget {
       this.height,
       this.canEdit = true,
       this.onChangeCard,
-      this.createCard});
+      this.createCard,
+      this.language = 'es'});
 
   @override
   _CreditCardState createState() => _CreditCardState();
@@ -158,7 +170,10 @@ class _CreditCardState extends State<CreditCard>
                           child: ChangeNotifierProvider.value(
                               value: card,
                               child: CreditForm(
-                                  this.widget.onChangeCard, (_) {}))));
+                                this.widget.onChangeCard,
+                                (_) {},
+                                language: this.widget.language,
+                              ))));
                 }
               },
               child: Consumer<CreditCardInfo>(
@@ -395,12 +410,9 @@ class CreditForm extends StatefulWidget {
   final Function(CreditCardInfo cardInfo) dropCardOnCancel;
   final Future Function(String code) validateCode;
   final int codeLength;
-  CreditForm(
-    this.onChangedCard,
-    this.dropCardOnCancel, {
-    this.validateCode,
-    this.codeLength,
-  });
+  final String language;
+  CreditForm(this.onChangedCard, this.dropCardOnCancel,
+      {this.validateCode, this.codeLength, this.language});
 
   @override
   _CreditFormState createState() => _CreditFormState();
@@ -408,6 +420,7 @@ class CreditForm extends StatefulWidget {
 
 class _CreditFormState extends State<CreditForm> {
   final _formKey = GlobalKey<FormState>();
+  String language;
   TextEditingController _number = new TextEditingController(),
       _name = new TextEditingController(text: ''),
       _date = new TextEditingController(text: ''),
@@ -439,6 +452,7 @@ class _CreditFormState extends State<CreditForm> {
   @override
   void initState() {
     super.initState();
+    this.language = this.widget.language ?? 'es';
     _getCard();
     _setListeners();
   }
@@ -476,7 +490,7 @@ class _CreditFormState extends State<CreditForm> {
           });
         } catch (error) {}
       } else {
-        info.credit = "Not valid";
+        info.credit = this.language == 'es' ? 'Invalido' : "Not valid";
         Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
       }
     });
@@ -488,7 +502,8 @@ class _CreditFormState extends State<CreditForm> {
       } else if (_cvv.text.length == 3) {
         if (double.tryParse(_cvv.text) == null) {
           _error = 4;
-          _errorS = "Debe ser numérico";
+          _errorS =
+              this.language == "es" ? "Debe ser numérico" : 'Must be numeric';
         } else {
           _error = 0;
           _errorS = "";
@@ -604,8 +619,16 @@ class _CreditFormState extends State<CreditForm> {
                           mainAxisSize: MainAxisSize.max,
                           children: info.cardtype == CardType.credit
                               ? <Widget>[
-                                  textForm("Nombre", w, _name),
-                                  textForm("Número de tarjeta", w, _number),
+                                  textForm(
+                                      this.language == 'es' ? "Nombre" : "Name",
+                                      w,
+                                      _name),
+                                  textForm(
+                                      this.language == 'es'
+                                          ? "Número de tarjeta"
+                                          : 'Card Number',
+                                      w,
+                                      _number),
                                   Container(
                                     width: MediaQuery.of(context).size.width,
                                     child: Row(
@@ -614,7 +637,11 @@ class _CreditFormState extends State<CreditForm> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
-                                        textForm("Fecha de expiración", w * 0.4,
+                                        textForm(
+                                            this.language == 'es'
+                                                ? "Fecha de expiración"
+                                                : "Valid Thru",
+                                            w * 0.4,
                                             _date),
                                         textForm("CVV", w * 0.4, _cvv)
                                       ],
@@ -641,7 +668,10 @@ class _CreditFormState extends State<CreditForm> {
                           width: w * 0.72,
                           height: 60,
                           child: Center(
-                              child: Text("Confirmar",
+                              child: Text(
+                                  this.language == "es"
+                                      ? "Confirmar"
+                                      : "Confirm",
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w500,
@@ -694,7 +724,7 @@ class _CreditFormState extends State<CreditForm> {
         style: new TextStyle(fontSize: 20),
         controller: _code,
         decoration: InputDecoration(
-          labelText: 'Contraseña',
+          labelText: this.language == "es" ? 'Contraseña' : "Password",
           labelStyle: TextStyle(
             fontFamily: "Baloo Baihna 2",
             fontWeight: FontWeight.w500,
@@ -710,7 +740,7 @@ class _CreditFormState extends State<CreditForm> {
         obscureText: true,
         validator: (value) {
           if (value.isEmpty) {
-            return 'Required';
+            return this.language == "es" ? 'Obligatorio' : 'Required';
           } else {
             return null;
           }
@@ -730,7 +760,7 @@ class _CreditFormState extends State<CreditForm> {
         style: new TextStyle(fontSize: 20),
         controller: _code,
         decoration: InputDecoration(
-          labelText: 'Código',
+          labelText: this.language == "es" ? 'Código' : "Code",
           labelStyle: TextStyle(
             fontFamily: "Baloo Baihna 2",
             fontWeight: FontWeight.w500,
@@ -745,7 +775,7 @@ class _CreditFormState extends State<CreditForm> {
         keyboardType: TextInputType.text,
         validator: (value) {
           if (value.isEmpty) {
-            return 'Required';
+            return this.language == "es" ? 'Obligatorio' : 'Required';
           } else {
             return null;
           }
@@ -780,13 +810,15 @@ class _CreditFormState extends State<CreditForm> {
         keyboardType: TextInputType.emailAddress,
         validator: (value) {
           if (value.isEmpty) {
-            return 'Required';
+            return this.language == "es" ? 'Obligatorio' : 'Required';
           } else {
             Pattern pat =
                 r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
             RegExp exp = new RegExp(pat);
             if (!exp.hasMatch(value)) {
-              return 'Email is invalid';
+              return this.language == "es"
+                  ? "Email invalido"
+                  : 'Email is invalid';
             }
             return null;
           }
@@ -820,32 +852,35 @@ class _CreditFormState extends State<CreditForm> {
           ),
         ),
         obscureText: _labelText == 'CVV',
-        keyboardType:
-            _labelText == 'Nombre' ? TextInputType.text : TextInputType.number,
+        keyboardType: (_labelText == 'Nombre' || _labelText == 'Name')
+            ? TextInputType.text
+            : TextInputType.number,
         inputFormatters: [
-          _labelText != 'Nombre'
+          (_labelText != 'Nombre' || _labelText != 'Name')
               ? WhitelistingTextInputFormatter(RegExp("[0-9·\ /]"))
               : WhitelistingTextInputFormatter(RegExp("[a-zA-Z\ ]"))
         ],
         validator: (value) {
           if (value.isEmpty) {
-            return 'Required';
+            return this.language == "es" ? "Obligatorio" : 'Required';
           } else {
             switch (_error) {
               case 1:
-                if (_labelText == 'Nombre') {
+                if (_labelText == 'Nombre' || _labelText == 'Name') {
                   return _errorS;
                 } else
                   return null;
                 break;
               case 2:
-                if (_labelText == 'Número de tarjeta') {
+                if (_labelText == 'Número de tarjeta' ||
+                    _labelText == 'Card Number') {
                   return _errorS;
                 } else
                   return null;
                 break;
               case 3:
-                if (_labelText == 'Fecha de expiración') {
+                if (_labelText == 'Fecha de expiración' ||
+                    _labelText == 'Valid Thru') {
                   return _errorS;
                 } else
                   return null;
@@ -921,7 +956,9 @@ class _CreditFormState extends State<CreditForm> {
     } else {
       setState(() {
         _error = 2;
-        _errorS = "La tarjeta no es valida, reintente";
+        _errorS = this.language == 'es'
+            ? "La tarjeta no es valida, reintente"
+            : 'Invalid card number, retry';
       });
     }
     info.creditNumber = _number.text;
@@ -950,13 +987,13 @@ class _CreditFormState extends State<CreditForm> {
         print("year less than current Year");
         setState(() {
           _error = 3;
-          _errorS = "Año invalido";
+          _errorS = this.language == 'es' ? "Año invalido" : 'Invalid Year';
         });
       } else {
         if (month > 12 || month <= 0) {
           setState(() {
             _error = 3;
-            _errorS = "Mes invalido";
+            _errorS = this.language == 'es' ? "Mes invalido" : 'Invalid Month';
           });
         } else {
           setState(() {

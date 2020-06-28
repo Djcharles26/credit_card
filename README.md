@@ -3,6 +3,8 @@
 Credit card widget, a beautiful election for adding cards to your app, can be used as a good complement
 for store apps, gives a minimalist style.
 
+### Now implementing prepay cards
+
 ## Dependencies used
 
 This package uses 2 extern dependencies: 
@@ -14,6 +16,8 @@ This package uses 2 extern dependencies:
   -   credit_card_number_validator: ^1.0.4
   -   #### reference: https://pub.dev/packages/credit_card_number_validator
 
+## Now you can put 'es' or 'en' in your CreditCard() or CreditForm() language
+
 ## Using cards
 
 For using this widget we need to have a CreditCardInfo component created like in the example 
@@ -21,12 +25,13 @@ For using this widget we need to have a CreditCardInfo component created like in
 ```dart
   CreditCardInfo card = new CreditCardInfo(
     color: mainBlack,
-      id: 1,
-      cardHoldname: "User Name",
-      creditNumber: "4040 5050 4400 4040",
-      cvv: "123",
-      expiryDate: "12/22",
-      type: 1
+    id: 1,
+    cardHoldname: "User Name",
+    creditNumber: "4040 5050 4400 4040",
+    cvv: "123",
+    expiryDate: "12/22",
+    type: 1, //1: Mastercard, 2 Visa,3 Mastercard
+    cardtype: CardType.credit
   );
 ```
 
@@ -35,6 +40,21 @@ Or an empty card
 ```dart
   CreditCardInfo card = new CreditCardInfo.empty();
 ```
+
+It also can be a prepay card
+
+```dart
+  CreditCardInfo card = new CreditCardInfo(
+    color: mainblack,
+    id: 1,
+    cardHoldname: "Prepay Card",
+    credit: "\$50.0",
+    cardtype: CardType.prepay,
+    expiryDate: "02/20"
+  )
+```
+
+ ##### Soon including PayPal !!
 
 ### Note
 > This isnt just a simple class, this is a ChangeNotifier Class, which means we are creating a Provider for our card, this Provider help us to change at realtime the information inside our CreditCard Widget. In order to use this in correct way, we have to make the parent of this Widget be a ChangeNotifierProvider, in this way, all children of this will now absorb information and will have complete control. 
@@ -48,7 +68,8 @@ Then we need to create a CreditCard widget for displaying this info (Remember us
       creditCardInfo: card,
       onChangeCard(CreditCardInfo info) {
         //Do whatever you want to new information of card
-      }
+      },
+      //language: 'en'
     )
   );
 ```
@@ -75,7 +96,13 @@ To create new cards we can use a simple button to trigger a showDialog, and this
             //Method to discard any changes if card was created
             (info) {
               card = null;
-            }
+            },
+            language: 'en'
+            //values if we want to create a prepay card
+            validateCode: (String code){
+              /*Validate code here*/
+            },
+            codeLength: 12
           )
         )
       );
@@ -105,7 +132,8 @@ To create new cards we can use a simple button to trigger a showDialog, and this
       //Method to discard any changes if card was created
       (info) {
         card = null;
-      }
+      },
+      //language: 'en'
     )
   );
 ```
