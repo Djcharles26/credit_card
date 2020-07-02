@@ -856,9 +856,9 @@ class _CreditFormState extends State<CreditForm> {
             ? TextInputType.text
             : TextInputType.number,
         inputFormatters: [
-          (_labelText != 'Nombre' || _labelText != 'Name')
-              ? WhitelistingTextInputFormatter(RegExp("[0-9·\ /]"))
-              : WhitelistingTextInputFormatter(RegExp("[a-zA-Z\ ]"))
+          (_labelText != 'Nombre' && _labelText != 'Name')
+              ? FilteringTextInputFormatter.allow(RegExp("[0-9·\ /]"))
+              : FilteringTextInputFormatter.allow(RegExp("[a-zA-Z\ ]"))
         ],
         validator: (value) {
           if (value.isEmpty) {
