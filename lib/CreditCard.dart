@@ -422,12 +422,7 @@ class CreditForm extends StatefulWidget {
 class _CreditFormState extends State<CreditForm> {
   final _formKey = GlobalKey<FormState>();
   String language;
-  TextEditingController _number = new TextEditingController(),
-      _name = new TextEditingController(text: ''),
-      _date = new TextEditingController(text: ''),
-      _cvv = new TextEditingController(text: ''),
-      _email = new TextEditingController(text: ''),
-      _code = new TextEditingController(text: '');
+  TextEditingController _number,_name,_date,_cvv, _email;
 
   CreditCardInfo info;
   bool _isLoading = false;
@@ -454,77 +449,73 @@ class _CreditFormState extends State<CreditForm> {
   void initState() {
     super.initState();
     this.language = this.widget.language ?? 'es';
-    _getCard();
     _setListeners();
+    _getCard();
   }
 
   void _setListeners() {
-    _number.addListener(onChangeNumber);
-    _name.addListener(() {
-      info.cardHoldname = _name.text;
-      Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
-    });
-    _email.addListener(() {
-      info.email = _email.text;
-      Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
-    });
-    _code.addListener(() async {
-      setState(() {
-        _isLoading = false;
-      });
-      if (_code.text.length > this.widget.codeLength) {
-        _code.text = _code.text.substring(0, this.widget.codeLength);
-        _code.selection = TextSelection.collapsed(offset: _code.text.length);
-      } else if (_code.text.length == this.widget.codeLength) {
-        try {
-          setState(() {
-            _isLoading = true;
-          });
-          Map<String, String> codeValues =
-              await this.widget.validateCode(_code.text);
-          info.cardHoldname = codeValues['name'];
-          info.expiryDate = codeValues['expiryDate'];
-          info.credit = codeValues['credit'];
-          Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
-          setState(() {
-            _isLoading = false;
-          });
-        } catch (error) {}
-      } else {
-        info.credit = this.language == 'es' ? 'Invalido' : "Not valid";
+    if (Provider.of<CreditCardInfo>(context,listen:false).cardtype == CardType.paypal){
+      _email = new TextEditingController(text: '');
+       _email.addListener(() {
+        info.email = _email.text;
         Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
-      }
-    });
-    _date.addListener(onChangeDate);
-    _cvv.addListener(() {
-      if (_cvv.text.length > 3) {
-        _cvv.text = _cvv.text.substring(0, 3);
-        _cvv.selection = TextSelection.collapsed(offset: 3);
-      } else if (_cvv.text.length == 3) {
-        if (double.tryParse(_cvv.text) == null) {
-          _error = 4;
-          _errorS =
-              this.language == "es" ? "Debe ser numérico" : 'Must be numeric';
-        } else {
-          _error = 0;
-          _errorS = "";
-        }
-      }
+      });
+    }else if(Provider.of<CreditCardInfo>(context,listen:false).cardtype == CardType.credit){
+      _name = TextEditingController(text: '');
+      _number = TextEditingController(text: '');
+      _date = TextEditingController(text: '');
+      _cvv = TextEditingController(text: '');
 
-      info.cvv = _cvv.text;
-      Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
-    });
+      _number.addListener(onChangeNumber);
+      _name.addListener(() {
+        if(!_isLoading){
+
+          info.cardHoldname = _name.text;
+          Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
+        }
+      });
+      _date.addListener(onChangeDate);
+      _cvv.addListener(() {
+        if (_cvv.text.length > 3) {
+          _cvv.text = _cvv.text.substring(0, 3);
+          _cvv.selection = TextSelection.collapsed(offset: 3);
+        } else if (_cvv.text.length == 3) {
+          if (double.tryParse(_cvv.text) == null) {
+            _error = 4;
+            _errorS =
+                this.language == "es" ? "Debe ser numérico" : 'Must be numeric';
+          } else {
+            _error = 0;
+            _errorS = "";
+          }
+        }
+
+        info.cvv = _cvv.text;
+        if(!_isLoading){
+
+          Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
+        }
+      });
+    }
+   
+    
+
+    
   }
 
   void _getCard() {
     info = Provider.of<CreditCardInfo>(context, listen: false);
-    setState(() => _isLoading = true);
-    _name.text = info.cardHoldname;
-    _number.text = info.creditNumber;
-    _date.text = info.expiryDate;
-    _cvv.text = info.cvv;
+    if(info.cardtype == CardType.credit){
 
-    setState(() => _isLoading = false);
+      setState(() => _isLoading = true);
+      _name.text = info.cardHoldname;
+      _number.text = info.creditNumber;
+      _date.text = info.expiryDate;
+      _cvv.text = info.cvv;
+      setState(() => _isLoading = false);
+    }
+
+
   }
 
   Widget _label(int idx) {
@@ -723,7 +714,7 @@ class _CreditFormState extends State<CreditForm> {
         autofocus: false,
         enableInteractiveSelection: false,
         style: new TextStyle(fontSize: 20),
-        controller: _code,
+        controller: _email,
         decoration: InputDecoration(
           labelText: this.language == "es" ? 'Contraseña' : "Password",
           labelStyle: TextStyle(
@@ -759,7 +750,32 @@ class _CreditFormState extends State<CreditForm> {
         autofocus: false,
         enableInteractiveSelection: false,
         style: new TextStyle(fontSize: 20),
-        controller: _code,
+        onChanged: (str) async {
+          if (str.length == this.widget.codeLength) {
+            try {
+              setState(() {
+                _isLoading = true;
+              });
+              Map<String, String> codeValues =
+                  await this.widget.validateCode(str);
+              info.cardHoldname = codeValues['name'];
+              info.expiryDate = codeValues['expiryDate'];
+              info.credit = codeValues['credit'];
+              Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
+              setState(() {
+                _isLoading = false;
+              });
+            } catch (error) {}
+          } else {
+            info.cardHoldname = '';
+            info.expiryDate = '';
+            info.credit = this.widget.language == 'es' ? 'Invalido' : 'Not Valid';
+            Provider.of<CreditCardInfo>(context,listen:false).updateInfo(info);
+          }
+        },
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(this.widget.codeLength)
+        ],
         decoration: InputDecoration(
           labelText: this.language == "es" ? 'Código' : "Code",
           labelStyle: TextStyle(
@@ -829,8 +845,7 @@ class _CreditFormState extends State<CreditForm> {
     );
   }
 
-  Widget textForm(
-      String _labelText, double w, TextEditingController controller) {
+  Widget textForm(String _labelText, double w, TextEditingController controller) {
     return Container(
       width: w,
       padding: EdgeInsets.symmetric(vertical: 8),
@@ -964,7 +979,10 @@ class _CreditFormState extends State<CreditForm> {
       });
     }
     info.creditNumber = _number.text;
-    Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
+    if(!_isLoading){
+
+      Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
+    }
   }
 
   void onChangeDate() {
@@ -1005,6 +1023,9 @@ class _CreditFormState extends State<CreditForm> {
       }
     }
     info.expiryDate = _date.text;
-    Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
+    if(!_isLoading){
+
+      Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
+    }
   }
 }

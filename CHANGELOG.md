@@ -37,3 +37,7 @@
 ## [1.0.5] - 03/07/2020
 
 - Fixed asset unable to load
+
+## [1.0.6] - 03/07/200
+
+- Removed unnecesary 
