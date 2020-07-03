@@ -21,3 +21,19 @@
 ## [1.0.3] - 28/06/2020
 
 - Added english language support
+
+## [1.0.4] . 02/07/2020
+
+- Fixed Name textForm bug
+
+## [1.0.5-rc1]- 03/07/2020
+
+- First try of fixing assets
+
+## [1.0.5-rc2]- 03/07/2020
+
+- Second try of fixing assets
+
+## [1.0.5] - 03/07/2020
+
+- Fixed asset unable to load

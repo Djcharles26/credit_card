@@ -1,3 +1,3 @@
-library credit_card;
+library credit_card_minimalist;
 
 export './CreditCard.dart';

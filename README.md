@@ -16,9 +16,20 @@ This package uses 2 extern dependencies:
   -   credit_card_number_validator: ^1.0.4
   -   #### reference: https://pub.dev/packages/credit_card_number_validator
 
-## Now you can put 'es' or 'en' in your CreditCard() or CreditForm() language
+
+### Include this in your own pubspec.yaml to get the assets (Current fix)
+
+    - packages/credit_card_minimalist/cardIcons/visa.flr
+    - packages/credit_card_minimalist/cardIcons/mastercard.flr
+    - packages/credit_card_minimalist/cardIcons/amex.flr
+    - packages/credit_card_minimalist/cardIcons/credit_card.flr
+    - packages/credit_card_minimalist/cardIcons/PayPal.flr
+    - packages/credit_card_minimalist/cardIcons/Prepay.flr
 
 ## Using cards
+
+ ** Now you can put 'es' or 'en' in your CreditCard() or CreditForm() language **
+
 
 For using this widget we need to have a CreditCardInfo component created like in the example 
 

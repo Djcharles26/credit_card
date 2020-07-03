@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import './utils/Colors.dart';
 import 'package:provider/provider.dart';
 
+
 enum CardType {
   none,
   credit,
@@ -214,10 +215,10 @@ class _CreditCardState extends State<CreditCard>
                                     height: 50,
                                     child: FlareActor(
                                       prov.cardtype == CardType.credit
-                                          ? 'assets/cardIcons/${types[this.widget.creditCardInfo.type]}.flr'
+                                          ? 'packages/credit_card_minimalist/cardIcons/${types[this.widget.creditCardInfo.type]}.flr'
                                           : prov.cardtype == CardType.paypal
-                                              ? 'assets/cardIcons/PayPal.flr'
-                                              : 'assets/cardIcons/Prepay.flr',
+                                              ? 'packages/credit_card_minimalist/cardIcons/PayPal.flr'
+                                              : 'packages/credit_card_minimalist/cardIcons/Prepay.flr',
                                       animation: "Activate",
                                     ),
                                   ),
@@ -393,7 +394,7 @@ class _CreditCardState extends State<CreditCard>
                     height: 50,
                     margin: EdgeInsets.only(right: 15),
                     child: FlareActor(
-                      'assets/cardIcons/${this.types[this.widget.creditCardInfo.type]}.flr',
+                      'packages/credit_card_minimalist/cardIcons/${this.types[this.widget.creditCardInfo.type]}.flr',
                       animation: 'Activate',
                     ),
                   )
@@ -857,6 +858,7 @@ class _CreditFormState extends State<CreditForm> {
             : TextInputType.number,
         inputFormatters: [
           (_labelText != 'Nombre' && _labelText != 'Name')
+              
               ? FilteringTextInputFormatter.allow(RegExp("[0-9·\ /]"))
               : FilteringTextInputFormatter.allow(RegExp("[a-zA-Z\ ]"))
         ],

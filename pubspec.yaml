@@ -1,6 +1,6 @@
 name: credit_card_minimalist
 description: Beautiful credit card, completely editable, with all widgets ready to use, simple and pretty.
-version: 1.0.3
+version: 1.0.5
 homepage: https://github.com/Djcharles26/
 repository : https://github.com/Djcharles26/credit_card.git
 
@@ -28,7 +28,7 @@ flutter:
 
   # To add assets to your package, add an assets section, like this:
   assets:
-    - assets/cardIcons/
+    - lib/cardIcons/
   #
   # For details regarding assets in packages, see
   # https://flutter.dev/assets-and-images/#from-packages
