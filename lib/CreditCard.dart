@@ -3,7 +3,6 @@ import 'package:credit_card_number_validator/credit_card_number_validator.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import './utils/Colors.dart';
 import 'package:provider/provider.dart';
 
 
@@ -14,8 +13,19 @@ enum CardType {
   prepay,
 }
 
+enum CardBrand {
+  MASTERCARD,
+  VISA,
+  AMERICAN_EXPRESS,
+}
+
+const _mainBlack = Color.fromRGBO(27, 33, 35, 1);
+const _mainWhite = Color.fromRGBO(254, 254, 254, 1);
+const _orangePeel = Color.fromRGBO(253, 163, 53, 1);
+const _yellowOrange = Color.fromRGBO(255, 186, 81, 1);
+
 class CreditCardInfo extends ChangeNotifier {
-  int id;
+  String id;
   final double width;
   final double height;
   String cardHoldname;
@@ -24,7 +34,8 @@ class CreditCardInfo extends ChangeNotifier {
   String email;
   String cvv;
   String expiryDate;
-  int type;
+  String code;
+  CardBrand type;
   Color color;
   bool flipped;
   CardType cardtype;
@@ -55,7 +66,7 @@ class CreditCardInfo extends ChangeNotifier {
   });
 
   CreditCardInfo.empty(
-      {this.id = 0,
+      {this.id = "0",
       this.cardHoldname = '',
       this.creditNumber = '',
       this.cvv = '',
@@ -66,7 +77,7 @@ class CreditCardInfo extends ChangeNotifier {
       this.email = '',
       this.credit = '',
       this.color = Colors.black,
-      this.type = 0});
+      this.type = CardBrand.MASTERCARD});
 
   bool _flipCard = false;
 
@@ -90,10 +101,29 @@ class CreditCardInfo extends ChangeNotifier {
 }
 
 class CreditCard extends StatefulWidget {
+  /// Card information (insert CreditCardInfo.empty() if you want to start a new card)
   final CreditCardInfo creditCardInfo;
+
+  /// Width of the widget 
   final width;
+
+  /// Height of the widget
   final height;
-  final Function(CreditCardInfo card) onChangeCard;
+
+  /// Size of font of the Numbers (default: 18)
+  final double numberFont;
+
+  /// Size of font of all te text
+  final double textFont;
+
+  /// Function to execute if card is edited ()
+  final Future<void> Function(CreditCardInfo card) onChangeCard;
+
+  /// Function to execute if card edition is cancelled
+  final Future<void> Function() dropCardOnCancel;
+
+  /// Variable to block numbers except for last 4
+  final bool private;
   final bool createCard;
   final bool canEdit;
   final String language;
@@ -102,8 +132,12 @@ class CreditCard extends StatefulWidget {
       {@required this.creditCardInfo,
       this.width,
       this.height,
+      this.numberFont = 18,
+      this.textFont = 18,
       this.canEdit = true,
       this.onChangeCard,
+      this.dropCardOnCancel,
+      this.private = false,
       this.createCard,
       this.language = 'es'});
 
@@ -171,8 +205,9 @@ class _CreditCardState extends State<CreditCard>
                           child: ChangeNotifierProvider.value(
                               value: card,
                               child: CreditForm(
-                                this.widget.onChangeCard,
-                                (_) {},
+                                onChangedCard: this.widget.onChangeCard ?? (_) {},
+                                dropCardOnCancel: this.widget.dropCardOnCancel ?? (_) {},
+                                edit: true,
                                 language: this.widget.language,
                               ))));
                 }
@@ -215,7 +250,7 @@ class _CreditCardState extends State<CreditCard>
                                     height: 50,
                                     child: FlareActor(
                                       prov.cardtype == CardType.credit
-                                          ? 'packages/credit_card_minimalist/cardIcons/${types[this.widget.creditCardInfo.type]}.flr'
+                                          ? 'packages/credit_card_minimalist/cardIcons/${types[CardBrand.values.indexOf(this.widget.creditCardInfo.type)]}.flr'
                                           : prov.cardtype == CardType.paypal
                                               ? 'packages/credit_card_minimalist/cardIcons/PayPal.flr'
                                               : 'packages/credit_card_minimalist/cardIcons/Prepay.flr',
@@ -225,7 +260,9 @@ class _CreditCardState extends State<CreditCard>
                                   prov.cardtype == CardType.credit
                                       ? Center(
                                           child: Text(
-                                          this
+                                          this.widget.private ?
+                                            "**** **** **** " + this.widget.creditCardInfo.creditNumber
+                                          :   this
                                                   .widget
                                                   .creditCardInfo
                                                   .creditNumber ??
@@ -233,7 +270,7 @@ class _CreditCardState extends State<CreditCard>
                                           style: TextStyle(
                                               fontFamily: "kredit",
                                               fontWeight: FontWeight.w700,
-                                              fontSize: 18,
+                                              fontSize: this.widget.numberFont,
                                               color: Color.fromRGBO(
                                                   230, 230, 230, 1),
                                               letterSpacing: w * 0.01),
@@ -250,7 +287,7 @@ class _CreditCardState extends State<CreditCard>
                                               style: TextStyle(
                                                   fontFamily: "Baloo Baihna 2",
                                                   fontWeight: FontWeight.w700,
-                                                  fontSize: 18,
+                                                  fontSize: this.widget.textFont,
                                                   color: Color.fromRGBO(
                                                       230, 230, 230, 1),
                                                   letterSpacing: w * 0.01),
@@ -266,7 +303,7 @@ class _CreditCardState extends State<CreditCard>
                                               style: TextStyle(
                                                   fontFamily: "Baloo Baihna 2",
                                                   fontWeight: FontWeight.w700,
-                                                  fontSize: 18,
+                                                  fontSize: this.widget.textFont,
                                                   color: Color.fromRGBO(
                                                       230, 230, 230, 1),
                                                   letterSpacing: w * 0.01),
@@ -291,7 +328,7 @@ class _CreditCardState extends State<CreditCard>
                                               style: TextStyle(
                                                   fontFamily: "Baloo Baihna 2",
                                                   fontWeight: FontWeight.w700,
-                                                  fontSize: 16,
+                                                  fontSize: this.widget.textFont-2,
                                                   color: Colors.grey))),
                                       prov.cardtype == CardType.prepay ||
                                               prov.cardtype == CardType.credit
@@ -304,8 +341,8 @@ class _CreditCardState extends State<CreditCard>
                                               style: TextStyle(
                                                   fontFamily: "Baloo Baihna 2",
                                                   fontWeight: FontWeight.w700,
-                                                  fontSize: 18,
-                                                  color: mainWhite))
+                                                  fontSize: this.widget.textFont,
+                                                  color: _mainWhite))
                                           : Container(),
                                     ],
                                   ),
@@ -363,26 +400,26 @@ class _CreditCardState extends State<CreditCard>
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
                         Container(
-                            width: w * 0.5, height: h * 0.1, color: mainWhite),
+                            width: w * 0.5, height: h * 0.1, color: _mainWhite),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.end,
                           mainAxisSize: MainAxisSize.max,
                           children: <Widget>[
-                            Text("cvv",
+                            Text("cvc",
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: this.widget.textFont-3,
                                     fontFamily: "Baloo Baihna 2",
                                     color: Color.fromRGBO(230, 230, 230, 1),
                                     fontWeight: FontWeight.w200)),
                             SizedBox(
                               width: 15,
                             ),
-                            Text(this.widget.creditCardInfo.cvv,
+                            Text(this.widget.private ? "***" :  this.widget.creditCardInfo.cvv,
                                 style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: this.widget.numberFont,
                                     fontFamily: "Baloo Baihna 2",
-                                    color: mainWhite,
+                                    color: _mainWhite,
                                     fontWeight: FontWeight.w600))
                           ],
                         ),
@@ -394,7 +431,7 @@ class _CreditCardState extends State<CreditCard>
                     height: 50,
                     margin: EdgeInsets.only(right: 15),
                     child: FlareActor(
-                      'packages/credit_card_minimalist/cardIcons/${this.types[this.widget.creditCardInfo.type]}.flr',
+                      'packages/credit_card_minimalist/cardIcons/${this.types[CardBrand.values.indexOf(this.widget.creditCardInfo.type)]}.flr',
                       animation: 'Activate',
                     ),
                   )
@@ -407,20 +444,61 @@ class _CreditCardState extends State<CreditCard>
 }
 
 class CreditForm extends StatefulWidget {
+
+  ///Extra colors to add in the palette
+  final List<Color> extraColors;
+
+  ///Color of the background
+  final Color backgroundColor;
+
+  ///Color of button and Loading widget
+  final Color mainColor;
+
+  ///Color of textForm hide texts
+  final Color secondaryColor;
+
+  ///Color of the input texts
+  final Color textColor;
+
+  ///Color of the text of the confirm button
+  final Color buttonTextColor;
+
+  ///Text of the confirm button (default to Confirm (en) or Confirmar (es))
+  final Map<String,String> confirmButtonText;
+
+  /// Function that will return new data incoming from card form when Confirm button is returned
   final Function(CreditCardInfo cardInfo) onChangedCard;
+
+  /// Function to do if Cancel button is pressed
   final Function(CreditCardInfo cardInfo) dropCardOnCancel;
+
+  /// Function to call if a prepay card requires a revision of code
   final Future Function(String code) validateCode;
+
+  /// Permitted length of code 
   final int codeLength;
+
+  /// Lenguage in which this widget will appear (en: English, es: Spanish)
   final String language;
-  CreditForm(this.onChangedCard, this.dropCardOnCancel,
-      {this.validateCode, this.codeLength, this.language});
+
+  /// Flag to set if card can be edited in future (default false)
+  final bool edit;
+
+  CreditForm(
+      {@required this.onChangedCard,@required this.dropCardOnCancel, this.validateCode, this.codeLength = 12, this.language = "es", this.edit = false,
+        this.backgroundColor: _mainWhite, this.mainColor: _yellowOrange, this.secondaryColor: Colors.black38, this.textColor: _mainBlack, this.buttonTextColor: _mainBlack,
+        this.confirmButtonText, this.extraColors
+      });
 
   @override
   _CreditFormState createState() => _CreditFormState();
 }
 
+
+
 class _CreditFormState extends State<CreditForm> {
   final _formKey = GlobalKey<FormState>();
+  bool _loading = false;
   String language;
   TextEditingController _number,_name,_date,_cvv, _email;
 
@@ -436,13 +514,13 @@ class _CreditFormState extends State<CreditForm> {
     Color.fromRGBO(41, 128, 185, 1),
     Color.fromRGBO(142, 68, 173, 1),
     Color.fromRGBO(44, 62, 80, 1),
-    yellowOrange,
-    orangePeel,
+    _yellowOrange,
+    _orangePeel,
     Color.fromRGBO(231, 76, 60, 1),
     Color.fromRGBO(192, 57, 43, 1),
     Color.fromRGBO(189, 195, 199, 1),
     Color.fromRGBO(127, 140, 141, 1),
-    mainBlack,
+    _mainBlack,
   ];
 
   @override
@@ -451,6 +529,8 @@ class _CreditFormState extends State<CreditForm> {
     this.language = this.widget.language ?? 'es';
     _setListeners();
     _getCard();
+
+    if(this.widget.extraColors != null) this._colors.addAll(this.widget.extraColors);
   }
 
   void _setListeners() {
@@ -545,7 +625,7 @@ class _CreditFormState extends State<CreditForm> {
     double h = MediaQuery.of(context).size.height;
     return Consumer<CreditCardInfo>(builder: (context, card, _) {
       return Scaffold(
-        backgroundColor: mainWhite,
+        backgroundColor: this.widget.backgroundColor,
         body: Stack(
           fit: StackFit.expand,
           children: <Widget>[
@@ -569,10 +649,11 @@ class _CreditFormState extends State<CreditForm> {
                             child: Center(
                               child: CircularProgressIndicator(
                                 valueColor:
-                                    AlwaysStoppedAnimation(yellowOrange),
+                                    AlwaysStoppedAnimation(this.widget.mainColor,
                               ),
                             ),
                           )
+                        )
                         : Material(
                             elevation: 8,
                             color: Colors.transparent,
@@ -582,6 +663,7 @@ class _CreditFormState extends State<CreditForm> {
                                   context,
                                   listen: true),
                               canEdit: false,
+                              private: this.widget.edit,
                             )),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.025,
@@ -615,12 +697,12 @@ class _CreditFormState extends State<CreditForm> {
                                       this.language == 'es' ? "Nombre" : "Name",
                                       w,
                                       _name),
-                                  textForm(
+                                  !this.widget.edit ? textForm(
                                       this.language == 'es'
                                           ? "Número de tarjeta"
                                           : 'Card Number',
                                       w,
-                                      _number),
+                                      _number) : Container(),
                                   Container(
                                     width: MediaQuery.of(context).size.width,
                                     child: Row(
@@ -635,7 +717,7 @@ class _CreditFormState extends State<CreditForm> {
                                                 : "Valid Thru",
                                             w * 0.4,
                                             _date),
-                                        textForm("CVV", w * 0.4, _cvv)
+                                        !this.widget.edit ? textForm("CVC", w * 0.4, _cvv) : Container()
                                       ],
                                     ),
                                   )
@@ -653,28 +735,43 @@ class _CreditFormState extends State<CreditForm> {
                       height: h * 0.05,
                     ),
                     RaisedButton(
-                      color: yellowOrange,
+                      color: this.widget.mainColor,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                       child: Container(
                           width: w * 0.72,
                           height: 60,
                           child: Center(
-                              child: Text(
-                                  this.language == "es"
-                                      ? "Confirmar"
-                                      : "Confirm",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: "Baloo Baihna 2",
-                                      color: mainBlack)))),
-                      onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          this.widget.onChangedCard(Provider.of<CreditCardInfo>(
-                              context,
-                              listen: false));
-                          Navigator.pop(context);
+                              child: this._loading ? 
+                                CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(this.widget.textColor),)
+                              : 
+                                Text(
+                                  this.widget.confirmButtonText != null 
+                                    ? this.widget.confirmButtonText[this.language] 
+                                    : this.language == "es"
+                                        ? "Confirmar"
+                                        : "Confirm",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: this.widget.buttonTextColor)))),
+                      onPressed: ()async {
+                        if(!this._loading){
+                          this.setState(() {
+                            this._loading = true;
+                          });
+                          if (_formKey.currentState.validate()) {
+                            await this.widget.onChangedCard(Provider.of<CreditCardInfo>(
+                                context,
+                                listen: false));
+                                this.setState(() {
+                                  this._loading = false;
+                                });
+                            Navigator.of(context).pop(info);
+                          }
+                          this.setState(() {
+                            this._loading = false;
+                          });
                         }
                       },
                     )
@@ -691,7 +788,7 @@ class _CreditFormState extends State<CreditForm> {
                 splashColor: Colors.transparent,
                 child: Text("x",
                     style: TextStyle(
-                        color: mainBlack,
+                        color: this.widget.textColor,
                         fontSize: 32,
                         fontWeight: FontWeight.w300)),
                 onPressed: () {
@@ -713,7 +810,7 @@ class _CreditFormState extends State<CreditForm> {
       child: new TextFormField(
         autofocus: false,
         enableInteractiveSelection: false,
-        style: new TextStyle(fontSize: 20),
+        style: new TextStyle(fontSize: 20, color: this.widget.textColor),
         controller: _email,
         decoration: InputDecoration(
           labelText: this.language == "es" ? 'Contraseña' : "Password",
@@ -721,11 +818,11 @@ class _CreditFormState extends State<CreditForm> {
             fontFamily: "Baloo Baihna 2",
             fontWeight: FontWeight.w500,
             fontSize: 18,
-            color: Colors.black38,
+            color: this.widget.secondaryColor,
           ),
-          focusColor: mainGrey,
+          focusColor: this.widget.secondaryColor,
           focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: mainGrey),
+            borderSide: BorderSide(color: this.widget.secondaryColor),
           ),
         ),
         keyboardType: TextInputType.text,
@@ -747,9 +844,10 @@ class _CreditFormState extends State<CreditForm> {
       width: w,
       padding: EdgeInsets.symmetric(vertical: 8),
       child: new TextFormField(
+        
         autofocus: false,
         enableInteractiveSelection: false,
-        style: new TextStyle(fontSize: 20),
+        style: new TextStyle(fontSize: 20, color: this.widget.textColor),
         onChanged: (str) async {
           if (str.length == this.widget.codeLength) {
             try {
@@ -757,10 +855,11 @@ class _CreditFormState extends State<CreditForm> {
                 _isLoading = true;
               });
               Map<String, String> codeValues =
-                  await this.widget.validateCode(str);
+                  await this.widget.validateCode(str) ?? (_) async => {"error": "No function was passed"};
               info.cardHoldname = codeValues['name'];
               info.expiryDate = codeValues['expiryDate'];
               info.credit = codeValues['credit'];
+              info.code = str;
               Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
               setState(() {
                 _isLoading = false;
@@ -782,11 +881,11 @@ class _CreditFormState extends State<CreditForm> {
             fontFamily: "Baloo Baihna 2",
             fontWeight: FontWeight.w500,
             fontSize: 18,
-            color: Colors.black38,
+            color: this.widget.secondaryColor,
           ),
-          focusColor: mainGrey,
+          focusColor: this.widget.secondaryColor,
           focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: mainGrey),
+            borderSide: BorderSide(color: this.widget.secondaryColor),
           ),
         ),
         keyboardType: TextInputType.text,
@@ -809,7 +908,7 @@ class _CreditFormState extends State<CreditForm> {
       child: new TextFormField(
         autofocus: false,
         enableInteractiveSelection: false,
-        style: new TextStyle(fontSize: 20),
+        style: new TextStyle(fontSize: 20, color: this.widget.textColor),
         controller: _email,
         decoration: InputDecoration(
           labelText: 'Email',
@@ -817,11 +916,11 @@ class _CreditFormState extends State<CreditForm> {
             fontFamily: "Baloo Baihna 2",
             fontWeight: FontWeight.w500,
             fontSize: 18,
-            color: Colors.black38,
+            color: this.widget.secondaryColor,
           ),
-          focusColor: mainGrey,
+          focusColor: this.widget.secondaryColor,
           focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: mainGrey),
+            borderSide: BorderSide(color: this.widget.secondaryColor),
           ),
         ),
         keyboardType: TextInputType.emailAddress,
@@ -852,7 +951,7 @@ class _CreditFormState extends State<CreditForm> {
       child: new TextFormField(
         autofocus: false,
         enableInteractiveSelection: false,
-        style: new TextStyle(fontSize: 20),
+        style: new TextStyle(fontSize: 20, color: this.widget.textColor),
         controller: controller,
         decoration: InputDecoration(
           labelText: _labelText,
@@ -860,11 +959,11 @@ class _CreditFormState extends State<CreditForm> {
             fontFamily: "Baloo Baihna 2",
             fontWeight: FontWeight.w500,
             fontSize: 18,
-            color: Colors.black38,
+            color: this.widget.secondaryColor,
           ),
-          focusColor: mainGrey,
+          focusColor: this.widget.secondaryColor,
           focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: mainGrey),
+            borderSide: BorderSide(color: this.widget.secondaryColor),
           ),
         ),
         obscureText: _labelText == 'CVV',
@@ -874,8 +973,8 @@ class _CreditFormState extends State<CreditForm> {
         inputFormatters: [
           (_labelText != 'Nombre' && _labelText != 'Name')
               
-              ? FilteringTextInputFormatter.allow(RegExp("[0-9·\ /]"))
-              : FilteringTextInputFormatter.allow(RegExp("[a-zA-Z\ ]"))
+              ? WhitelistingTextInputFormatter(RegExp("[0-9·\ /]"))
+              : WhitelistingTextInputFormatter(RegExp("[a-zA-Z\ ]"))
         ],
         validator: (value) {
           if (value.isEmpty) {
@@ -946,7 +1045,7 @@ class _CreditFormState extends State<CreditForm> {
             TextSelection.collapsed(offset: _number.text.length);
       }
     } catch (error) {
-      print("Long error");
+      print("Empty field");
     }
 
     Map<dynamic, dynamic> cardData =
@@ -954,13 +1053,13 @@ class _CreditFormState extends State<CreditForm> {
     String cardType = cardData[CreditCardValidator.cardType];
     switch (cardType) {
       case "MASTERCARD":
-        info.type = 0;
+        info.type = CardBrand.MASTERCARD;
         break;
       case "VISA":
-        info.type = 1;
+        info.type = CardBrand.VISA;
         break;
       case "AMEX":
-        info.type = 2;
+        info.type = CardBrand.AMERICAN_EXPRESS;
         break;
       default:
         break;
@@ -986,16 +1085,20 @@ class _CreditFormState extends State<CreditForm> {
   }
 
   void onChangeDate() {
-    if (_date.text.length > 5) {
-      _date.text = _date.text.substring(0, 5);
-      _date.selection = TextSelection.collapsed(offset: 5);
-    } else if (_date.text[_date.text.length - 1] == "/") {
-      _date.text = _date.text.substring(0, 2);
-      _date.selection = TextSelection.collapsed(offset: 2);
-    } else if (_date.text.length == 3) {
-      print(_date.text.substring(0, 2));
-      _date.text = _date.text.substring(0, 2) + "/" + _date.text.substring(2);
-      _date.selection = TextSelection.collapsed(offset: _date.text.length);
+    try{
+      if (_date.text.length > 5) {
+        _date.text = _date.text.substring(0, 5);
+        _date.selection = TextSelection.collapsed(offset: 5);
+      } else if (_date.text[_date.text.length - 1] == "/") {
+        _date.text = _date.text.substring(0, 2);
+        _date.selection = TextSelection.collapsed(offset: 2);
+      } else if (_date.text.length == 3) {
+        print(_date.text.substring(0, 2));
+        _date.text = _date.text.substring(0, 2) + "/" + _date.text.substring(2);
+        _date.selection = TextSelection.collapsed(offset: _date.text.length);
+      }
+    }catch(error){
+      print("Empty text field");
     }
 
     if (_date.text.length == 5) {
