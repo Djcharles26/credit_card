@@ -73,3 +73,5 @@
 - Added comments in all variables
 - Fixed bugs on text enter
 - Added code validations
+- Added card brand enum
+- Passed colors to local file
