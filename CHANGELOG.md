@@ -38,6 +38,38 @@
 
 - Fixed asset unable to load
 
-## [1.0.6] - 03/07/200
+## [1.0.6] - 03/07/2020
 
-- Removed unnecesary 
+- Removed unnecesary logs (Although flutter have some problems with this)
+
+## [1.0.7] - 03/07/2020
+
+- Change on filters
+
+## [1.0.8] - 09/07/2020
+
+- Added code information to Provider
+
+## [1.0.9] - 26/07/2020
+
+- Added text fonts sizes 
+
+## [1.0.10] - 07/09/2020
+
+- Added private fields, and removed fields like cvc and credit number from edit Form
+
+## [1.0.11] - 07/09/2020
+
+- Changed Id from int to String for more flexibility
+
+## [1.0.12] - 07/09/2020
+
+- Changed OnChangeCard for a future function
+
+## [1.1.0] - 20/12/2020
+
+- Changed way onChangedCard and onDropCancel methods are called
+- Added color modifications
+- Added comments in all variables
+- Fixed bugs on text enter
+- Added code validations
