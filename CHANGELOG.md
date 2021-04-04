@@ -75,3 +75,9 @@
 - Added code validations
 - Added card brand enum
 - Passed colors to local file
+
+## [1.2.0] - 03/04/2021
+
+- Updated pubspec.yaml packages to latest versions
+- Fixed errors in showDialog() in order to work with FLuter 2.0
+- Updated examples versions
