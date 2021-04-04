@@ -200,7 +200,7 @@ class _CreditCardState extends State<CreditCard>
                   showDialog(
                       barrierDismissible: false,
                       context: context,
-                      child: WillPopScope(
+                      builder: (ctx) => WillPopScope(
                           onWillPop: () async => false,
                           child: ChangeNotifierProvider.value(
                               value: card,
