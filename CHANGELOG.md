@@ -81,3 +81,9 @@
 - Updated pubspec.yaml packages to latest versions
 - Fixed errors in showDialog() in order to work with FLuter 2.0
 - Updated examples versions
+
+
+## [1.2.1] - 14/04/2021
+
+- Fixed some warnings in Flutter 2.0
+- Fixed errors in prepay validate code functions
