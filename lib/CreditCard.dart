@@ -28,6 +28,7 @@ class CreditCardInfo extends ChangeNotifier {
   String id;
   final double width;
   final double height;
+  String name;
   String cardHoldname;
   String creditNumber;
   String credit;
@@ -52,6 +53,7 @@ class CreditCardInfo extends ChangeNotifier {
     this.height,
     this.color,
     this.flipped,
+    this.name = "",
   });
 
   CreditCardInfo.prepay({
@@ -63,10 +65,12 @@ class CreditCardInfo extends ChangeNotifier {
     this.width,
     this.height,
     this.color,
+    this.name,
   });
 
   CreditCardInfo.empty(
       {this.id = "0",
+      this.name = "",
       this.cardHoldname = '',
       this.creditNumber = '',
       this.cvv = '',
@@ -734,10 +738,13 @@ class _CreditFormState extends State<CreditForm> {
                     SizedBox(
                       height: h * 0.05,
                     ),
-                    RaisedButton(
-                      color: this.widget.mainColor,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(this.widget.mainColor),
+                        overlayColor: MaterialStateProperty.all(Colors.transparent),
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),)
+                      ),
                       child: Container(
                           width: w * 0.72,
                           height: 60,
@@ -782,10 +789,10 @@ class _CreditFormState extends State<CreditForm> {
             Positioned(
               top: 8,
               left: -16,
-              child: FlatButton(
-                focusColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
+              child: TextButton(
+                style: ButtonStyle(
+                  overlayColor: MaterialStateProperty.all(Colors.transparent)
+                ),
                 child: Text("x",
                     style: TextStyle(
                         color: this.widget.textColor,
@@ -856,10 +863,11 @@ class _CreditFormState extends State<CreditForm> {
               });
               Map<String, String> codeValues =
                   await this.widget.validateCode(str) ?? (_) async => {"error": "No function was passed"};
-              info.cardHoldname = codeValues['name'];
+              info.cardHoldname = codeValues['cardHoldname'];
+              info.name = codeValues["name"];
               info.expiryDate = codeValues['expiryDate'];
               info.credit = codeValues['credit'];
-              info.code = str;
+              info.creditNumber = str;
               Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
               setState(() {
                 _isLoading = false;
@@ -972,9 +980,8 @@ class _CreditFormState extends State<CreditForm> {
             : TextInputType.number,
         inputFormatters: [
           (_labelText != 'Nombre' && _labelText != 'Name')
-              
-              ? WhitelistingTextInputFormatter(RegExp("[0-9·\ /]"))
-              : WhitelistingTextInputFormatter(RegExp("[a-zA-Z\ ]"))
+              ? FilteringTextInputFormatter.allow(RegExp("[0-9·\ /]"))
+              : FilteringTextInputFormatter.allow(RegExp("[a-zA-Z\ ]"))
         ],
         validator: (value) {
           if (value.isEmpty) {
