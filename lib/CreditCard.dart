@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-
 enum CardType {
   none,
   credit,
@@ -108,7 +107,7 @@ class CreditCard extends StatefulWidget {
   /// Card information (insert CreditCardInfo.empty() if you want to start a new card)
   final CreditCardInfo creditCardInfo;
 
-  /// Width of the widget 
+  /// Width of the widget
   final width;
 
   /// Height of the widget
@@ -209,8 +208,10 @@ class _CreditCardState extends State<CreditCard>
                           child: ChangeNotifierProvider.value(
                               value: card,
                               child: CreditForm(
-                                onChangedCard: this.widget.onChangeCard ?? (_) {},
-                                dropCardOnCancel: this.widget.dropCardOnCancel ?? (_) {},
+                                onChangedCard:
+                                    this.widget.onChangeCard ?? (_) {},
+                                dropCardOnCancel:
+                                    this.widget.dropCardOnCancel ?? (_) {},
                                 edit: true,
                                 language: this.widget.language,
                               ))));
@@ -264,13 +265,17 @@ class _CreditCardState extends State<CreditCard>
                                   prov.cardtype == CardType.credit
                                       ? Center(
                                           child: Text(
-                                          this.widget.private ?
-                                            "**** **** **** " + this.widget.creditCardInfo.creditNumber
-                                          :   this
-                                                  .widget
-                                                  .creditCardInfo
-                                                  .creditNumber ??
-                                              '',
+                                          this.widget.private
+                                              ? "**** **** **** " +
+                                                  this
+                                                      .widget
+                                                      .creditCardInfo
+                                                      .creditNumber
+                                              : this
+                                                      .widget
+                                                      .creditCardInfo
+                                                      .creditNumber ??
+                                                  '',
                                           style: TextStyle(
                                               fontFamily: "kredit",
                                               fontWeight: FontWeight.w700,
@@ -291,7 +296,8 @@ class _CreditCardState extends State<CreditCard>
                                               style: TextStyle(
                                                   fontFamily: "Baloo Baihna 2",
                                                   fontWeight: FontWeight.w700,
-                                                  fontSize: this.widget.textFont,
+                                                  fontSize:
+                                                      this.widget.textFont,
                                                   color: Color.fromRGBO(
                                                       230, 230, 230, 1),
                                                   letterSpacing: w * 0.01),
@@ -303,14 +309,14 @@ class _CreditCardState extends State<CreditCard>
                                                           .widget
                                                           .creditCardInfo
                                                           .credit <=
-                                                      0
+                                                      0.0
                                                   ? this.widget.language == "es"
                                                       ? "Invalido"
                                                       : 'Not valid'
                                                   : this
                                                           .widget
                                                           .creditCardInfo
-                                                          .credit ??
+                                                          .credit.toStringAsFixed(2) ??
                                                       "",
                                               style: TextStyle(
                                                   fontFamily: "Baloo Baihna 2",
@@ -341,7 +347,8 @@ class _CreditCardState extends State<CreditCard>
                                               style: TextStyle(
                                                   fontFamily: "Baloo Baihna 2",
                                                   fontWeight: FontWeight.w700,
-                                                  fontSize: this.widget.textFont-2,
+                                                  fontSize:
+                                                      this.widget.textFont - 2,
                                                   color: Colors.grey))),
                                       prov.cardtype == CardType.prepay ||
                                               prov.cardtype == CardType.credit
@@ -354,7 +361,8 @@ class _CreditCardState extends State<CreditCard>
                                               style: TextStyle(
                                                   fontFamily: "Baloo Baihna 2",
                                                   fontWeight: FontWeight.w700,
-                                                  fontSize: this.widget.textFont,
+                                                  fontSize:
+                                                      this.widget.textFont,
                                                   color: _mainWhite))
                                           : Container(),
                                     ],
@@ -421,14 +429,17 @@ class _CreditCardState extends State<CreditCard>
                           children: <Widget>[
                             Text("cvc",
                                 style: TextStyle(
-                                    fontSize: this.widget.textFont-3,
+                                    fontSize: this.widget.textFont - 3,
                                     fontFamily: "Baloo Baihna 2",
                                     color: Color.fromRGBO(230, 230, 230, 1),
                                     fontWeight: FontWeight.w200)),
                             SizedBox(
                               width: 15,
                             ),
-                            Text(this.widget.private ? "***" :  this.widget.creditCardInfo.cvv,
+                            Text(
+                                this.widget.private
+                                    ? "***"
+                                    : this.widget.creditCardInfo.cvv,
                                 style: TextStyle(
                                     fontSize: this.widget.numberFont,
                                     fontFamily: "Baloo Baihna 2",
@@ -457,7 +468,6 @@ class _CreditCardState extends State<CreditCard>
 }
 
 class CreditForm extends StatefulWidget {
-
   ///Extra colors to add in the palette
   final List<Color> extraColors;
 
@@ -477,7 +487,7 @@ class CreditForm extends StatefulWidget {
   final Color buttonTextColor;
 
   ///Text of the confirm button (default to Confirm (en) or Confirmar (es))
-  final Map<String,String> confirmButtonText;
+  final Map<String, String> confirmButtonText;
 
   /// Function that will return new data incoming from card form when Confirm button is returned
   final Function(CreditCardInfo cardInfo) onChangedCard;
@@ -488,7 +498,7 @@ class CreditForm extends StatefulWidget {
   /// Function to call if a prepay card requires a revision of code
   final Future Function(String code) validateCode;
 
-  /// Permitted length of code 
+  /// Permitted length of code
   final int codeLength;
 
   /// Lenguage in which this widget will appear (en: English, es: Spanish)
@@ -498,22 +508,29 @@ class CreditForm extends StatefulWidget {
   final bool edit;
 
   CreditForm(
-      {@required this.onChangedCard,@required this.dropCardOnCancel, this.validateCode, this.codeLength = 12, this.language = "es", this.edit = false,
-        this.backgroundColor: _mainWhite, this.mainColor: _yellowOrange, this.secondaryColor: Colors.black38, this.textColor: _mainBlack, this.buttonTextColor: _mainBlack,
-        this.confirmButtonText, this.extraColors
-      });
+      {@required this.onChangedCard,
+      @required this.dropCardOnCancel,
+      this.validateCode,
+      this.codeLength = 12,
+      this.language = "es",
+      this.edit = false,
+      this.backgroundColor: _mainWhite,
+      this.mainColor: _yellowOrange,
+      this.secondaryColor: Colors.black38,
+      this.textColor: _mainBlack,
+      this.buttonTextColor: _mainBlack,
+      this.confirmButtonText,
+      this.extraColors});
 
   @override
   _CreditFormState createState() => _CreditFormState();
 }
 
-
-
 class _CreditFormState extends State<CreditForm> {
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
   String language;
-  TextEditingController _number,_name,_date,_cvv, _email;
+  TextEditingController _number, _name, _date, _cvv, _email;
 
   CreditCardInfo info;
   bool _isLoading = false;
@@ -543,17 +560,20 @@ class _CreditFormState extends State<CreditForm> {
     _setListeners();
     _getCard();
 
-    if(this.widget.extraColors != null) this._colors.addAll(this.widget.extraColors);
+    if (this.widget.extraColors != null)
+      this._colors.addAll(this.widget.extraColors);
   }
 
   void _setListeners() {
-    if (Provider.of<CreditCardInfo>(context,listen:false).cardtype == CardType.paypal){
+    if (Provider.of<CreditCardInfo>(context, listen: false).cardtype ==
+        CardType.paypal) {
       _email = new TextEditingController(text: '');
-       _email.addListener(() {
+      _email.addListener(() {
         info.email = _email.text;
         Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
       });
-    }else if(Provider.of<CreditCardInfo>(context,listen:false).cardtype == CardType.credit){
+    } else if (Provider.of<CreditCardInfo>(context, listen: false).cardtype ==
+        CardType.credit) {
       _name = TextEditingController(text: '');
       _number = TextEditingController(text: '');
       _date = TextEditingController(text: '');
@@ -561,8 +581,7 @@ class _CreditFormState extends State<CreditForm> {
 
       _number.addListener(onChangeNumber);
       _name.addListener(() {
-        if(!_isLoading){
-
+        if (!_isLoading) {
           info.cardHoldname = _name.text;
           Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
         }
@@ -584,22 +603,16 @@ class _CreditFormState extends State<CreditForm> {
         }
 
         info.cvv = _cvv.text;
-        if(!_isLoading){
-
+        if (!_isLoading) {
           Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
         }
       });
     }
-   
-    
-
-    
   }
 
   void _getCard() {
     info = Provider.of<CreditCardInfo>(context, listen: false);
-    if(info.cardtype == CardType.credit){
-
+    if (info.cardtype == CardType.credit) {
       setState(() => _isLoading = true);
       _name.text = info.cardHoldname;
       _number.text = info.creditNumber;
@@ -607,8 +620,6 @@ class _CreditFormState extends State<CreditForm> {
       _cvv.text = info.cvv;
       setState(() => _isLoading = false);
     }
-
-
   }
 
   Widget _label(int idx) {
@@ -639,181 +650,195 @@ class _CreditFormState extends State<CreditForm> {
     return Consumer<CreditCardInfo>(builder: (context, card, _) {
       return Scaffold(
         backgroundColor: this.widget.backgroundColor,
-        body: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            SizedBox(
-              height: h * 0.1,
-            ),
-            SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.05,
-                    ),
-                    _isLoading
-                        ? Container(
-                            width: MediaQuery.of(context).size.width * 0.72,
-                            height: MediaQuery.of(context).size.width * 0.45,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                valueColor:
-                                    AlwaysStoppedAnimation(this.widget.mainColor,
-                              ),
-                            ),
-                          )
-                        )
-                        : Material(
-                            elevation: 8,
-                            color: Colors.transparent,
-                            shadowColor: Color.fromRGBO(250, 250, 250, .5),
-                            child: CreditCard(
-                              creditCardInfo: Provider.of<CreditCardInfo>(
-                                  context,
-                                  listen: true),
-                              canEdit: false,
-                              private: this.widget.edit,
-                            )),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.025,
-                    ),
-                    Container(
-                      constraints: BoxConstraints(
-                        maxWidth: w * 0.72,
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal:16, vertical: 32),
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              SizedBox(
+                height: h * 0.1,
+              ),
+              SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.05,
                       ),
-                      child: Center(
-                          child: GridView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  new SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 8),
-                              itemCount: this._colors.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return this._label(index);
-                              })),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(15),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          mainAxisSize: MainAxisSize.max,
-                          children: info.cardtype == CardType.credit
-                              ? <Widget>[
-                                  textForm(
-                                      this.language == 'es' ? "Nombre" : "Name",
-                                      w,
-                                      _name),
-                                  !this.widget.edit ? textForm(
-                                      this.language == 'es'
-                                          ? "Número de tarjeta"
-                                          : 'Card Number',
-                                      w,
-                                      _number) : Container(),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        textForm(
+                      _isLoading
+                          ? Container(
+                              width: MediaQuery.of(context).size.width * 0.72,
+                              height: MediaQuery.of(context).size.width * 0.45,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation(
+                                    this.widget.mainColor,
+                                  ),
+                                ),
+                              ))
+                          : Material(
+                              elevation: 8,
+                              color: Colors.transparent,
+                              shadowColor: Color.fromRGBO(250, 250, 250, .5),
+                              child: CreditCard(
+                                creditCardInfo: Provider.of<CreditCardInfo>(
+                                    context,
+                                    listen: true),
+                                canEdit: false,
+                                private: this.widget.edit,
+                              )),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.025,
+                      ),
+                      Container(
+                        constraints: BoxConstraints(
+                          maxWidth: w * 0.72,
+                        ),
+                        child: Center(
+                            child: GridView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    new SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 8),
+                                itemCount: this._colors.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return this._label(index);
+                                })),
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(15),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisSize: MainAxisSize.max,
+                            children: info.cardtype == CardType.credit
+                                ? <Widget>[
+                                    textForm(
+                                        this.language == 'es' ? "Nombre" : "Name",
+                                        w,
+                                        _name),
+                                    !this.widget.edit
+                                        ? textForm(
                                             this.language == 'es'
-                                                ? "Fecha de expiración"
-                                                : "Valid Thru",
-                                            w * 0.4,
-                                            _date),
-                                        !this.widget.edit ? textForm("CVC", w * 0.4, _cvv) : Container()
-                                      ],
-                                    ),
-                                  )
-                                ]
-                              : info.cardtype == CardType.paypal
-                                  ? <Widget>[
-                                      emailTextForm(w),
-                                      passwordTextForm(w),
-                                    ]
-                                  : <Widget>[codeTextForm(w)],
+                                                ? "Número de tarjeta"
+                                                : 'Card Number',
+                                            w,
+                                            _number)
+                                        : Container(),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          textForm(
+                                              this.language == 'es'
+                                                  ? "Fecha de expiración"
+                                                  : "Valid Thru",
+                                              w * 0.4,
+                                              _date),
+                                          !this.widget.edit
+                                              ? textForm("CVC", w * 0.4, _cvv)
+                                              : Container()
+                                        ],
+                                      ),
+                                    )
+                                  ]
+                                : info.cardtype == CardType.paypal
+                                    ? <Widget>[
+                                        emailTextForm(w),
+                                        passwordTextForm(w),
+                                      ]
+                                    : <Widget>[codeTextForm(w)],
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: h * 0.05,
-                    ),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(this.widget.mainColor),
-                        overlayColor: MaterialStateProperty.all(Colors.transparent),
-                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),)
+                      SizedBox(
+                        height: h * 0.05,
                       ),
-                      child: Container(
-                          width: w * 0.72,
-                          height: 60,
-                          child: Center(
-                              child: this._loading ? 
-                                CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(this.widget.textColor),)
-                              : 
-                                Text(
-                                  this.widget.confirmButtonText != null 
-                                    ? this.widget.confirmButtonText[this.language] 
-                                    : this.language == "es"
-                                        ? "Confirmar"
-                                        : "Confirm",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                        color: this.widget.buttonTextColor)))),
-                      onPressed: ()async {
-                        if(!this._loading){
-                          this.setState(() {
-                            this._loading = true;
-                          });
-                          if (_formKey.currentState.validate()) {
-                            await this.widget.onChangedCard(Provider.of<CreditCardInfo>(
-                                context,
-                                listen: false));
-                                this.setState(() {
-                                  this._loading = false;
-                                });
-                            Navigator.of(context).pop(info);
+                      ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(this.widget.mainColor),
+                            overlayColor:
+                                MaterialStateProperty.all(Colors.transparent),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                            )),
+                        child: Container(
+                            width: w * 0.72,
+                            height: 60,
+                            child: Center(
+                                child: this._loading
+                                    ? CircularProgressIndicator(
+                                        valueColor: AlwaysStoppedAnimation(
+                                            this.widget.textColor),
+                                      )
+                                    : Text(
+                                        this.widget.confirmButtonText != null
+                                            ? this
+                                                .widget
+                                                .confirmButtonText[this.language]
+                                            : this.language == "es"
+                                                ? "Confirmar"
+                                                : "Confirm",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w500,
+                                            color:
+                                                this.widget.buttonTextColor)))),
+                        onPressed: () async {
+                          if (!this._loading) {
+                            this.setState(() {
+                              this._loading = true;
+                            });
+                            if (_formKey.currentState.validate()) {
+                              await this.widget.onChangedCard(
+                                  Provider.of<CreditCardInfo>(context,
+                                      listen: false));
+                              this.setState(() {
+                                this._loading = false;
+                              });
+                              Navigator.of(context).pop(info);
+                            }
+                            this.setState(() {
+                              this._loading = false;
+                            });
                           }
-                          this.setState(() {
-                            this._loading = false;
-                          });
-                        }
-                      },
-                    )
-                  ],
+                        },
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              top: 8,
-              left: -16,
-              child: TextButton(
-                style: ButtonStyle(
-                  overlayColor: MaterialStateProperty.all(Colors.transparent)
+              Positioned(
+                top: 8,
+                left: -16,
+                child: TextButton(
+                  style: ButtonStyle(
+                      overlayColor:
+                          MaterialStateProperty.all(Colors.transparent)),
+                  child: Text("x",
+                      style: TextStyle(
+                          color: this.widget.textColor,
+                          fontSize: 32,
+                          fontWeight: FontWeight.w300)),
+                  onPressed: () {
+                    this.widget.dropCardOnCancel(info);
+                    Navigator.pop(context);
+                  },
                 ),
-                child: Text("x",
-                    style: TextStyle(
-                        color: this.widget.textColor,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w300)),
-                onPressed: () {
-                  this.widget.dropCardOnCancel(info);
-                  Navigator.pop(context);
-                },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     });
@@ -860,7 +885,6 @@ class _CreditFormState extends State<CreditForm> {
       width: w,
       padding: EdgeInsets.symmetric(vertical: 8),
       child: new TextFormField(
-        
         autofocus: false,
         enableInteractiveSelection: false,
         style: new TextStyle(fontSize: 20, color: this.widget.textColor),
@@ -870,23 +894,36 @@ class _CreditFormState extends State<CreditForm> {
               setState(() {
                 _isLoading = true;
               });
-              Map<String, String> codeValues =
-                  await this.widget.validateCode(str) ?? (_) async => {"error": "No function was passed"};
+              Map<String, dynamic> codeValues =
+                  await this.widget.validateCode(str) ??
+                      (_) async => {"error": "No function was passed"};
               info.cardHoldname = codeValues['cardHoldname'];
               info.name = codeValues["name"];
               info.expiryDate = codeValues['expiryDate'];
               info.credit = codeValues['credit'];
-              info.creditNumber = str;
-              Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
+              info.creditNumber = codeValues["creditNumber"];
+              Provider.of<CreditCardInfo>(context, listen: false)
+                  .updateInfo(info);
               setState(() {
                 _isLoading = false;
               });
-            } catch (error) {}
+            } catch (error) {
+              print(error);
+              setState(() {
+                _isLoading = false;
+              });
+              info.cardHoldname = '';
+              info.expiryDate = '';
+              info.credit = -1;
+              Provider.of<CreditCardInfo>(context, listen: false)
+                  .updateInfo(info);
+            }
           } else {
             info.cardHoldname = '';
             info.expiryDate = '';
-            info.credit = this.widget.language == 'es' ? 'Invalido' : 'Not Valid';
-            Provider.of<CreditCardInfo>(context,listen:false).updateInfo(info);
+            info.credit = -1;
+            Provider.of<CreditCardInfo>(context, listen: false)
+                .updateInfo(info);
           }
         },
         inputFormatters: [
@@ -961,7 +998,8 @@ class _CreditFormState extends State<CreditForm> {
     );
   }
 
-  Widget textForm(String _labelText, double w, TextEditingController controller) {
+  Widget textForm(
+      String _labelText, double w, TextEditingController controller) {
     return Container(
       width: w,
       padding: EdgeInsets.symmetric(vertical: 8),
@@ -1094,14 +1132,13 @@ class _CreditFormState extends State<CreditForm> {
       });
     }
     info.creditNumber = _number.text;
-    if(!_isLoading){
-
+    if (!_isLoading) {
       Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
     }
   }
 
   void onChangeDate() {
-    try{
+    try {
       if (_date.text.length > 5) {
         _date.text = _date.text.substring(0, 5);
         _date.selection = TextSelection.collapsed(offset: 5);
@@ -1113,7 +1150,7 @@ class _CreditFormState extends State<CreditForm> {
         _date.text = _date.text.substring(0, 2) + "/" + _date.text.substring(2);
         _date.selection = TextSelection.collapsed(offset: _date.text.length);
       }
-    }catch(error){
+    } catch (error) {
       print("Empty text field");
     }
 
@@ -1142,8 +1179,7 @@ class _CreditFormState extends State<CreditForm> {
       }
     }
     info.expiryDate = _date.text;
-    if(!_isLoading){
-
+    if (!_isLoading) {
       Provider.of<CreditCardInfo>(context, listen: false).updateInfo(info);
     }
   }
