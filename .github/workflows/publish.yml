@@ -14,13 +14,13 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: '1.9.1+hotfix.6'
+          flutter-version: '2.0.4'
       - name: Install dependencies
         run: flutter pub get
       - name: Analyze
         run: flutter analyze
-      - name: Run tests
-        run: flutter test
+      # - name: Run tests
+      #   run: flutter test
       - name: Setup Pub Credentials
         shell: bash
         env:
@@ -44,7 +44,7 @@ jobs:
 
       - name: Read version file
         id: get_version
-        run: echo "::set--output name=version::$(cat version.txt)"
+        run: echo "::set-output name=version::$(cat version.txt)"
 
       - name: Read changelog
         id: get_changes
@@ -54,7 +54,7 @@ jobs:
           changes="${changes//$'\n'/'%0A'}"
           changes="${changes//$'\r'/'%0D'}"
           echo "::set-output name=changes::$changes"
-      
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
