@@ -31,7 +31,7 @@ class CreditCardInfo extends ChangeNotifier {
   String name;
   String cardHoldname;
   String creditNumber;
-  String credit;
+  double credit;
   String email;
   String cvv;
   String expiryDate;
@@ -79,7 +79,7 @@ class CreditCardInfo extends ChangeNotifier {
       this.width,
       this.cardtype = CardType.credit,
       this.email = '',
-      this.credit = '',
+      this.credit = 0.0,
       this.color = Colors.black,
       this.type = CardBrand.MASTERCARD});
 
@@ -300,14 +300,23 @@ class _CreditCardState extends State<CreditCard>
                                           : Center(
                                               child: Text(
                                               this
-                                                      .widget
-                                                      .creditCardInfo
-                                                      .credit ??
-                                                  '',
+                                                          .widget
+                                                          .creditCardInfo
+                                                          .credit <=
+                                                      0
+                                                  ? this.widget.language == "es"
+                                                      ? "Invalido"
+                                                      : 'Not valid'
+                                                  : this
+                                                          .widget
+                                                          .creditCardInfo
+                                                          .credit ??
+                                                      "",
                                               style: TextStyle(
                                                   fontFamily: "Baloo Baihna 2",
                                                   fontWeight: FontWeight.w700,
-                                                  fontSize: this.widget.textFont,
+                                                  fontSize:
+                                                      this.widget.textFont,
                                                   color: Color.fromRGBO(
                                                       230, 230, 230, 1),
                                                   letterSpacing: w * 0.01),
