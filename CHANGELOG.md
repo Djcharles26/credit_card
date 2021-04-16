@@ -87,3 +87,9 @@
 
 - Fixed some warnings in Flutter 2.0
 - Fixed errors in prepay validate code functions
+
+## [1.2.2] - 16/04/2021
+
+- Changed credit from string to double
+- Now validateCode function is Map<String, dynamic> type
+- Formatted code

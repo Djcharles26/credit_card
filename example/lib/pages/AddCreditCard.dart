@@ -10,19 +10,16 @@ class AddCard extends StatefulWidget {
 class _AddCardState extends State<AddCard> {
   @override
   Widget build(BuildContext context) {
-    
     return ChangeNotifierProvider.value(
-      value: new CreditCardInfo.empty(cardtype: CardType.credit),
-      child: CreditForm(
-        onChangedCard: (info) async {
-          print(info.toString());
-        },
-        dropCardOnCancel: (_) {
-        },
-        // mainColor: Colors.red,
-        // secondaryColor: Colors.white,
-        // backgroundColor: Colors.green,
-      )
-    );
+        value: new CreditCardInfo.empty(cardtype: CardType.credit),
+        child: CreditForm(
+          onChangedCard: (info) async {
+            print(info.toString());
+          },
+          dropCardOnCancel: (_) {},
+          // mainColor: Colors.red,
+          // secondaryColor: Colors.white,
+          // backgroundColor: Colors.green,
+        ));
   }
 }
