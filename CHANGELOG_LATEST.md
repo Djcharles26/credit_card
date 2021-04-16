@@ -1,0 +1,3 @@
+- Changed credit from string to double
+- Now validateCode function is Map<String, dynamic> type
+- Formatted code
