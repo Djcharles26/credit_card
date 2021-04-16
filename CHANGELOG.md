@@ -93,3 +93,8 @@
 - Changed credit from string to double
 - Now validateCode function is Map<String, dynamic> type
 - Formatted code
+
+## [1.2.3] - 16/04/2021
+
+- Removed warnings in examples
+- Added publish workflow

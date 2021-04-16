@@ -8,7 +8,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<CreditCardInfo> cards = new List();
+  List<CreditCardInfo> cards = [];
 
   @override
   void initState() {
@@ -48,15 +48,21 @@ class _HomeState extends State<Home> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  RaisedButton(
-                    color: Theme.of(context).backgroundColor,
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Theme.of(context).backgroundColor),
+                      overlayColor: MaterialStateProperty.all(Colors.transparent)
+                    ),
                     onPressed: () {
                       Navigator.of(context).pushNamed("/addCard");
                     },
                     child: Text("Add a new credit card"),
                   ),
-                  RaisedButton(
-                    color: Theme.of(context).backgroundColor,
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Theme.of(context).backgroundColor),
+                      overlayColor: MaterialStateProperty.all(Colors.transparent)
+                    ),
                     onPressed: () {},
                     child: Text("Add a new prepay card"),
                   ),
