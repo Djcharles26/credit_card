@@ -14,7 +14,7 @@ dependencies:
     sdk: flutter
 
 
-  credit_card_minimalist: ^1.2.3
+  credit_card_minimalist: ^1.2.2
   provider: ^5.0.0
 
   # The following adds the Cupertino Icons font to your application.
@@ -24,6 +24,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+dependency_overrides:
+  credit_card_minimalist:
+    path: ../
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
